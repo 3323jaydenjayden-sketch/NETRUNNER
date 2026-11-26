@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NETRUNNER // 系統身分驗證 (LOGIN)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --matrix-green: #00ff41;
+      --matrix-dark: #050505;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; padding: 0;
+      background-color: var(--matrix-dark);
+      color: var(--matrix-green);
+      font-family: 'Fira Code', 'Noto Sans TC', monospace;
+      min-height: 100vh;
+    }
+    .crt-overlay {
+      pointer-events: none;
+      position: fixed;
+      inset: 0;
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%),
+                  linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 255, 0, 0.03));
+      background-size: 100% 3px, 6px 100%;
+      z-index: 9999;
+    }
+    .matrix-glow { text-shadow: 0 0 7px rgba(0, 255, 65, 0.7); }
+    .matrix-border {
+      border: 1px solid rgba(0, 255, 65, 0.35);
+      box-shadow: inset 0 0 15px rgba(0, 255, 65, 0.08), 0 0 12px rgba(0, 255, 65, 0.12);
+    }
+  </style>
+</head>
+<body class="flex flex-col items-center justify-center p-4">
+  <div class="crt-overlay"></div>
+
+  <div class="max-w-sm w-full matrix-border rounded-lg p-6 bg-[#041004] space-y-4 shadow-2xl shadow-[#00ff41]/20 relative z-10">
+    <div class="flex justify-center mb-2">
+      <span class="inline-block w-4 h-4 rounded-full bg-[#00ff41] animate-ping"></span>
+    </div>
+    <h1 class="text-2xl font-bold matrix-glow text-center tracking-widest">NETRUNNER OS</h1>
+    <p class="text-xs text-center text-gray-400">請驗證您的駭客身分以進入 <span class="text-[#00ff41]"></span>（密碼至少 6 碼）</p>
+
+    <div class="space-y-3">
+      <div>
+        <input id="auth-email" type="email" placeholder="電子郵件 (Email)" class="w-full bg-black border border-[#00ff41]/40 rounded p-2.5 text-[#00ff41] font-mono outline-none text-sm focus:border-[#00ff41] transition-colors" />
+      </div>
+      <div>
+        <input id="auth-password" type="password" placeholder="密碼 (至少 6 個字元)" class="w-full bg-black border border-[#00ff41]/40 rounded p-2.5 text-[#00ff41] font-mono outline-none text-sm focus:border-[#00ff41] transition-colors" />
+      </div>
+      <div class="flex justify-end">
+        <button type="button" onclick="resetPasswordEmail()" class="text-[11px] text-cyan-400 hover:text-cyan-300 underline cursor-pointer">
+          忘記密碼？寄送重設信
+        </button>
+      </div>
+      <div class="flex gap-2 pt-1">
+        <button onclick="loginWithEmail()" class="flex-1 py-2 bg-[#005511] hover:bg-[#007711] border border-[#00ff41]/50 font-bold rounded text-xs transition-colors cursor-pointer">信箱登入</button>
+        <button onclick="registerWithEmail()" class="flex-1 py-2 bg-black hover:bg-gray-900 border border-gray-600 font-bold rounded text-xs text-gray-300 transition-colors cursor-pointer">註冊帳號</button>
+      </div>
+    </div>
+
+    <div class="flex items-center gap-2 my-3">
+      <div class="flex-1 border-t border-[#00ff41]/20"></div>
+      <span class="text-[10px] text-gray-500 font-mono">OR</span>
+      <div class="flex-1 border-t border-[#00ff41]/20"></div>
+    </div>
+
+    <button onclick="loginWithGoogle()" class="w-full py-2.5 bg-white text-black hover:bg-gray-200 font-bold rounded text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer">
+      <svg class="w-4 h-4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+      使用 Google 帳號登入
+    </button>
+
+    <button onclick="loginAnonymously()" class="w-full py-2 bg-transparent border border-[#00ff41]/30 hover:bg-[#00ff41]/15 text-[#00ff41] font-bold rounded text-xs transition-colors cursor-pointer">
+      訪客登入 (免帳號)
+    </button>
+
+    <div id="auth-error" class="text-red-400 text-xs text-center min-h-[16px] font-bold mt-2"></div>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import {
+      getAuth,
+      signInAnonymously,
+      signInWithPopup,
+      GoogleAuthProvider,
+      signInWithEmailAndPassword,
+      createUserWithEmailAndPassword,
+      sendPasswordResetEmail,
+      onAuthStateChanged
+    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDgYczLHRiBLM7AFfmCd_sUHdrgMPhK60M",
+      authDomain: "netrunner-5ce22.firebaseapp.com",
+      projectId: "netrunner-5ce22",
+      storageBucket: "netrunner-5ce22.firebasestorage.app",
+      messagingSenderId: "266321582327",
+      appId: "1:266321582327:web:6703a5de20443ca0075bf2",
+      measurementId: "G-CLEDTMLG5W"
+    };
+
+    function formatAuthError(err) {
+      const code = err?.code || "";
+      switch (code) {
+        case "auth/weak-password":
+          return "註冊失敗：密碼太弱，至少需要 6 個字元。";
+        case "auth/email-already-in-use":
+          return "註冊失敗：此電子郵件已經註冊過，請直接點「信箱登入」。";
+        case "auth/invalid-email":
+          return "格式錯誤：請輸入有效的電子郵件地址。";
+        case "auth/user-not-found":
+        case "auth/invalid-credential":
+          return "登入失敗：電子郵件或密碼不正確（若尚未建立帳號，請點「註冊帳號」）。";
+        case "auth/wrong-password":
+          return "登入失敗：密碼錯誤。";
+        case "auth/operation-not-allowed":
+          return "後台尚未啟用此登入方式：請至 Firebase 驗證設定開啟對應提供者。";
+        case "auth/unauthorized-domain":
+          return "網域未授權：請至 Firebase 驗證設定將目前網域加入 Authorized domains。";
+        case "auth/network-request-failed":
+          return "網路連線失敗：請檢查網路或防火牆/廣告封鎖擴充功能。";
+        default:
+          return `操作失敗 (${code || "unknown"})：${err?.message || "請稍後再試"}`;
+      }
+    }
+
+    function setStatusMsg(msg, colorClass = "text-red-400") {
+      const el = document.getElementById("auth-error");
+      el.className = `${colorClass} text-xs text-center min-h-[16px] font-bold mt-2`;
+      el.textContent = msg;
+    }
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const googleProvider = new GoogleAuthProvider();
+
+    function syncUserHandleToStorage(user) {
+      const defaultName = user.displayName || (user.email ? user.email.split("@")[0] : null);
+      if (!defaultName) return;
+      try {
+        const raw = localStorage.getItem("netrunner_hacker_sim_v6");
+        const parsed = raw ? JSON.parse(raw) : {};
+        if (!parsed.handle) {
+          parsed.handle = defaultName.substring(0, 12);
+          localStorage.setItem("netrunner_hacker_sim_v6", JSON.stringify(parsed));
+        }
+      } catch (e) {}
+    }
+
+    window.loginWithGoogle = async () => {
+      try {
+        setStatusMsg("連線 Google 中...", "text-cyan-300");
+        const cred = await signInWithPopup(auth, googleProvider);
+        redirectToIndex(cred.user);
+      } catch (err) {
+        setStatusMsg(formatAuthError(err), "text-red-400");
+      }
+    };
+
+    window.loginWithEmail = async () => {
+      const email = document.getElementById("auth-email").value.trim();
+      const pass = document.getElementById("auth-password").value;
+      if (!email || !pass) return setStatusMsg("請輸入電子郵件與密碼", "text-red-400");
+      try {
+        setStatusMsg("驗證中...", "text-cyan-300");
+        const cred = await signInWithEmailAndPassword(auth, email, pass);
+        redirectToIndex(cred.user);
+      } catch (err) {
+        setStatusMsg(formatAuthError(err), "text-red-400");
+      }
+    };
+
+    window.registerWithEmail = async () => {
+      const email = document.getElementById("auth-email").value.trim();
+      const pass = document.getElementById("auth-password").value;
+      if (!email || !pass) return setStatusMsg("請輸入電子郵件與密碼", "text-red-400");
+      if (pass.length < 6) return setStatusMsg("註冊失敗：密碼至少需要 6 個字元", "text-red-400");
+      try {
+        setStatusMsg("建立帳號中...", "text-cyan-300");
+        const cred = await createUserWithEmailAndPassword(auth, email, pass);
+        redirectToIndex(cred.user);
+      } catch (err) {
+        setStatusMsg(formatAuthError(err), "text-red-400");
+      }
+    };
+
+    window.resetPasswordEmail = async () => {
+      const email = document.getElementById("auth-email").value.trim();
+      if (!email) return setStatusMsg("請先在上方輸入電子郵件地址", "text-red-400");
+      try {
+        setStatusMsg("正在寄送重設密碼信件...", "text-cyan-300");
+        await sendPasswordResetEmail(auth, email);
+        setStatusMsg(`重設信件已寄出至 ${email}，請查收信件（含垃圾郵件匣）。`, "text-emerald-400");
+      } catch (err) {
+        setStatusMsg(formatAuthError(err), "text-red-400");
+      }
+    };
+
+    window.loginAnonymously = async () => {
+      try {
+        setStatusMsg("建立匿名連線中...", "text-cyan-300");
+        const cred = await signInAnonymously(auth);
+        redirectToIndex(cred.user);
+      } catch (err) {
+        setStatusMsg(formatAuthError(err), "text-red-400");
+      }
+    };
+
+    let redirected = false;
+    function redirectToIndex(user) {
+      if (!user || redirected) return;
+      redirected = true;
+      syncUserHandleToStorage(user);
+      setStatusMsg("身分驗證成功，正在導向 ...", "text-emerald-400");
+      window.location.href = "index.html";
+    }
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        redirectToIndex(user);
+      }
+    });
+  </script>
+</body>
+</html>
