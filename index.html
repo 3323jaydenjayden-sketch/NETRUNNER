@@ -1,4 +1,4 @@
-  <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8" />
@@ -34,7 +34,7 @@
       position: fixed;
       inset: 0;
       background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.35) 50%),
-                  linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.03));
+                  linear-gradient(90deg, rgba(255, 0, 0, 0.03), rgba(0, 255, 0, 0.01), rgba(0, 255, 0, 0.03));
       background-size: 100% 3px, 6px 100%;
       z-index: 9999;
     }
@@ -117,59 +117,16 @@
   <div class="crt-overlay"></div>
 
   <!-- =========================================================
-       LOGIN VIEW (AUTHENTICATION SCREEN)
-  ========================================================== -->
-  <div id="login-view" class="fixed inset-0 z-[9000] flex flex-col items-center justify-center bg-[#050505] text-[#00ff41]">
-    <div class="max-w-sm w-full matrix-border rounded-lg p-6 bg-[#041004] space-y-4 shadow-2xl shadow-[#00ff41]/20">
-      <div class="flex justify-center mb-4">
-        <span class="inline-block w-4 h-4 rounded-full bg-[#00ff41] animate-ping"></span>
-      </div>
-      <h2 class="text-2xl font-bold matrix-glow text-center tracking-widest">NETRUNNER OS</h2>
-      <p class="text-xs text-center text-gray-400 mb-4">請驗證您的駭客身分以接入矩陣網路</p>
-      
-      <div class="space-y-3">
-        <div>
-          <input id="auth-email" type="email" placeholder="電子郵件 (Email)" class="w-full bg-black border border-[#00ff41]/40 rounded p-2.5 text-[#00ff41] font-mono outline-none text-sm focus:border-[#00ff41] transition-colors" />
-        </div>
-        <div>
-          <input id="auth-password" type="password" placeholder="密碼 (Password)" class="w-full bg-black border border-[#00ff41]/40 rounded p-2.5 text-[#00ff41] font-mono outline-none text-sm focus:border-[#00ff41] transition-colors" />
-        </div>
-        <div class="flex gap-2 pt-1">
-          <button onclick="loginWithEmail()" class="flex-1 py-2 bg-[#005511] hover:bg-[#007711] border border-[#00ff41]/50 font-bold rounded text-xs transition-colors cursor-pointer">信箱登入</button>
-          <button onclick="registerWithEmail()" class="flex-1 py-2 bg-black hover:bg-gray-900 border border-gray-600 font-bold rounded text-xs text-gray-300 transition-colors cursor-pointer">註冊帳號</button>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-2 my-4">
-        <div class="flex-1 border-t border-[#00ff41]/20"></div>
-        <span class="text-[10px] text-gray-500 font-mono">OR</span>
-        <div class="flex-1 border-t border-[#00ff41]/20"></div>
-      </div>
-
-      <button onclick="loginWithGoogle()" class="w-full py-2.5 bg-white text-black hover:bg-gray-200 font-bold rounded text-xs flex items-center justify-center gap-2 transition-colors cursor-pointer">
-        <svg class="w-4 h-4" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
-        使用 Google 帳號登入
-      </button>
-      
-      <button onclick="loginAnonymously()" class="w-full py-2 bg-transparent border border-[#00ff41]/30 hover:bg-[#00ff41]/15 text-[#00ff41] font-bold rounded text-xs transition-colors cursor-pointer">
-        訪客登入 (免帳號)
-      </button>
-
-      <div id="auth-error" class="text-red-400 text-xs text-center min-h-[16px] font-bold mt-2"></div>
-    </div>
-  </div>
-
-  <!-- =========================================================
        VIEW 1: HARDCORE MATRIX CLI TERMINAL INTERFACE
   ========================================================== -->
-  <div id="cli-view" class="hidden h-screen w-screen flex flex-col p-2 sm:p-4 gap-3 bg-[#050505]">
+  <div id="cli-view" class="h-screen w-screen flex flex-col p-2 sm:p-4 gap-3 bg-[#050505]">
     <!-- Top Cyber Header -->
     <header class="matrix-border rounded-lg px-4 py-2 flex flex-wrap items-center justify-between bg-[#071107] text-xs sm:text-sm">
       <div class="flex items-center gap-3">
         <span class="inline-block w-3 h-3 rounded-full bg-[#00ff41] animate-ping"></span>
         <h1 class="font-bold tracking-wider matrix-glow text-sm sm:text-base">NETRUNNER OS v6.0 // 硬核滲透矩陣</h1>
       </div>
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-3 sm:gap-4">
         <span class="text-[#00ff41]">資產: <strong id="btc-balance-display" class="text-yellow-400">0.0000 BTC</strong></span>
         <span id="proxy-badge" class="px-2 py-0.5 rounded border border-gray-600 text-gray-400">PROXY: 未關聯</span>
         <span id="sound-status-badge" class="px-2 py-0.5 rounded border border-[#00ff41]/40 text-[#00ff41] cursor-pointer" onclick="toggleSoundFromBadge()">音效: 開啟</span>
@@ -281,6 +238,114 @@
   </div>
 
   <!-- =========================================================
+       VIEW 2: WINDOWS 11 REMOTE DESKTOP INTERFACE
+  ========================================================== -->
+  <div id="rdp-view" class="hidden fixed inset-0 z-40 flex flex-col bg-black">
+    <!-- Top RDP Bar -->
+    <div class="h-10 bg-gradient-to-r from-[#0f172a] via-[#1e3a8a] to-[#0f172a] border-b border-blue-400/40 px-3 sm:px-5 flex items-center justify-between text-white text-xs sm:text-sm shadow-lg z-50">
+      <div class="flex items-center gap-2 sm:gap-3">
+        <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span class="font-semibold tracking-wide">RDP 遠端操控電腦</span>
+        <span id="rdp-target-ip-badge" class="px-2 py-0.5 rounded bg-black/40 border border-blue-300/30 font-mono text-xs text-cyan-300">192.168.10.14</span>
+        <span id="rdp-target-user-badge" class="hidden sm:inline text-xs text-blue-200">User: Admin</span>
+      </div>
+
+      <div class="flex items-center gap-3 sm:gap-5">
+        <div id="rdp-trace-box" class="flex items-center gap-1.5 px-2.5 py-1 rounded bg-black/50 border border-white/15">
+          <span class="text-xs text-gray-300">追蹤倒數:</span>
+          <span id="rdp-trace-timer" class="font-mono font-bold text-emerald-400">安全</span>
+        </div>
+        <button onclick="disconnectRDP()" class="px-3 py-1 rounded bg-red-600 hover:bg-red-500 text-white font-medium text-xs transition cursor-pointer">
+          中斷遠端連線
+        </button>
+      </div>
+    </div>
+
+    <!-- Win11 Desktop Canvas -->
+    <div id="win11-desktop" class="flex-1 win11-wallpaper relative select-none overflow-hidden" onclick="handleDesktopClick(event)">
+      <!-- Desktop Shortcut Icons Grid -->
+      <div id="win11-desktop-icons" class="p-4 grid grid-flow-col grid-rows-5 gap-3 w-fit relative z-10">
+      </div>
+
+      <!-- App Windows Layer -->
+      <div id="win11-windows-layer" class="absolute inset-0 pointer-events-none z-20">
+      </div>
+
+      <!-- Win11 Toast Notification -->
+      <div id="win11-toast" class="hidden fixed bottom-16 right-4 z-50 win11-glass rounded-xl p-3.5 max-w-xs text-white shadow-2xl border border-cyan-400/40 transition-all">
+        <div class="flex items-start gap-3">
+          <div class="w-8 h-8 rounded-lg bg-cyan-500/20 border border-cyan-400/50 flex items-center justify-center text-cyan-300 font-bold shrink-0">✓</div>
+          <div>
+            <div id="win11-toast-title" class="text-xs font-bold text-cyan-300">資料成功回傳</div>
+            <div id="win11-toast-msg" class="text-xs text-gray-200 mt-0.5">檔案已傳輸至 NETRUNNER 本機。</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Start Menu -->
+      <div id="win11-start-menu" class="hidden absolute bottom-14 left-1/2 -translate-x-1/2 w-[92%] max-w-[460px] win11-glass rounded-2xl p-5 text-white shadow-2xl z-40">
+        <div class="mb-4">
+          <div class="bg-black/40 border border-white/15 rounded-full px-3.5 py-1.5 text-xs text-gray-300 flex items-center gap-2">
+            <span>🔍</span><span>在此搜尋應用程式與文件...</span>
+          </div>
+        </div>
+        <div class="text-xs font-semibold text-gray-300 mb-3 px-1">釘選的工具</div>
+        <div class="grid grid-cols-4 gap-3 text-center text-xs">
+          <button onclick="openWinApp('explorer'); toggleStartMenu(false)" class="p-2.5 rounded-lg hover:bg-white/10 flex flex-col items-center gap-1.5 cursor-pointer">
+            <span class="text-2xl">📁</span><span>檔案總管</span>
+          </button>
+          <button onclick="openWinApp('edge'); toggleStartMenu(false)" class="p-2.5 rounded-lg hover:bg-white/10 flex flex-col items-center gap-1.5 cursor-pointer">
+            <span class="text-2xl">🌐</span><span>Edge 瀏覽器</span>
+          </button>
+          <button onclick="openWinApp('taskmgr'); toggleStartMenu(false)" class="p-2.5 rounded-lg hover:bg-white/10 flex flex-col items-center gap-1.5 cursor-pointer">
+            <span class="text-2xl">⚡</span><span>工作管理員</span>
+          </button>
+          <button onclick="openWinApp('cmd'); toggleStartMenu(false)" class="p-2.5 rounded-lg hover:bg-white/10 flex flex-col items-center gap-1.5 cursor-pointer">
+            <span class="text-2xl">💻</span><span>命令提示字元</span>
+          </button>
+        </div>
+        <div class="mt-4 pt-3 border-t border-white/15 flex items-center justify-between text-xs">
+          <div class="flex items-center gap-2">
+            <div class="w-7 h-7 rounded-full bg-blue-600 flex items-center justify-center font-bold">U</div>
+            <span id="start-menu-username">User</span>
+          </div>
+          <button onclick="disconnectRDP()" class="text-red-300 hover:text-red-200 cursor-pointer">⏻ 關閉連線</button>
+        </div>
+      </div>
+
+      <!-- Taskbar -->
+      <div class="absolute bottom-0 inset-x-0 h-12 win11-glass border-t border-white/15 px-4 flex items-center justify-between z-40">
+        <div class="hidden sm:flex items-center gap-2 text-xs text-gray-300">
+          <span>🌤️</span><span>22°C 晴</span>
+        </div>
+
+        <div class="flex items-center gap-2 mx-auto">
+          <button onclick="event.stopPropagation(); toggleStartMenu()" class="w-9 h-9 rounded-lg hover:bg-white/15 flex items-center justify-center cursor-pointer">
+            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none">
+              <rect x="2" y="2" width="9" height="9" rx="1.5" fill="#38bdf8"/>
+              <rect x="13" y="2" width="9" height="9" rx="1.5" fill="#38bdf8"/>
+              <rect x="2" y="13" width="9" height="9" rx="1.5" fill="#0284c7"/>
+              <rect x="13" y="13" width="9" height="9" rx="1.5" fill="#0284c7"/>
+            </svg>
+          </button>
+          <button onclick="openWinApp('explorer')" class="w-9 h-9 rounded-lg hover:bg-white/15 flex items-center justify-center text-lg cursor-pointer">📁</button>
+          <button onclick="openWinApp('edge')" class="w-9 h-9 rounded-lg hover:bg-white/15 flex items-center justify-center text-lg cursor-pointer">🌐</button>
+          <button onclick="openWinApp('taskmgr')" class="w-9 h-9 rounded-lg hover:bg-white/15 flex items-center justify-center text-lg cursor-pointer" title="工作管理員">⚡</button>
+          <button onclick="openWinApp('cmd')" class="w-9 h-9 rounded-lg hover:bg-white/15 flex items-center justify-center text-lg cursor-pointer" title="命令提示字元">💻</button>
+        </div>
+
+        <div class="flex items-center gap-3 text-[11px] text-gray-200">
+          <span>🖥️</span><span>🔊</span>
+          <div class="text-right leading-tight">
+            <div id="win11-clock-time">20:00</div>
+            <div id="win11-clock-date" class="text-[10px] text-gray-400">2026/11/20</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
        FIREWALL HEX BYPASS MINI-GAME MODAL OVERLAY
   ========================================================== -->
   <div id="hex-game-modal" class="hidden fixed inset-0 z-50 bg-black/90 flex flex-col items-center justify-center p-4">
@@ -305,7 +370,6 @@
 
       <!-- 4x4 Hex Grid -->
       <div id="hex-grid" class="grid grid-cols-4 gap-2 font-mono text-center text-sm">
-        <!-- Injected via JS -->
       </div>
 
       <div class="flex justify-between items-center pt-2 border-t border-[#00ff41]/30">
@@ -335,19 +399,9 @@
   ========================================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { 
-        getAuth, 
-        signInAnonymously, 
-        signInWithPopup, 
-        GoogleAuthProvider, 
-        signInWithEmailAndPassword, 
-        createUserWithEmailAndPassword, 
-        onAuthStateChanged 
-    } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, onSnapshot, collection, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getAuth, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getFirestore, doc, setDoc, onSnapshot, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-    const appId = typeof __app_id !== 'undefined' ? __app_id : 'netrunner-sim-id';
-    
     // 使用玩家專屬的 Firebase 設定檔
     const firebaseConfig = {
       apiKey: "AIzaSyDgYczLHRiBLM7AFfmCd_sUHdrgMPhK60M",
@@ -358,7 +412,7 @@
       appId: "1:266321582327:web:6703a5de20443ca0075bf2",
       measurementId: "G-CLEDTMLG5W"
     };
-    
+
     try {
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -366,90 +420,21 @@
 
         window.multiplayerActive = false;
         window.myHandle = "Anon_Hacker";
-        window.onlinePlayers = {}; 
+        window.onlinePlayers = {};
 
-        // ================= AUTHENTICATION LOGIC =================
-        const googleProvider = new GoogleAuthProvider();
-
-        window.loginWithGoogle = async () => {
-            try {
-                document.getElementById('auth-error').textContent = "連線 Google 中...";
-                await signInWithPopup(auth, googleProvider);
-            } catch (err) {
-                document.getElementById('auth-error').textContent = `登入失敗: ${err.message}`;
-            }
-        };
-
-        window.loginWithEmail = async () => {
-            const email = document.getElementById('auth-email').value;
-            const pass = document.getElementById('auth-password').value;
-            if(!email || !pass) return document.getElementById('auth-error').textContent = "請輸入電子郵件與密碼";
-            try {
-                document.getElementById('auth-error').textContent = "驗證中...";
-                await signInWithEmailAndPassword(auth, email, pass);
-            } catch (err) {
-                document.getElementById('auth-error').textContent = `登入失敗: ${err.message}`;
-            }
-        };
-
-        window.registerWithEmail = async () => {
-            const email = document.getElementById('auth-email').value;
-            const pass = document.getElementById('auth-password').value;
-            if(!email || !pass) return document.getElementById('auth-error').textContent = "請輸入電子郵件與密碼";
-            try {
-                document.getElementById('auth-error').textContent = "註冊中...";
-                await createUserWithEmailAndPassword(auth, email, pass);
-            } catch (err) {
-                document.getElementById('auth-error').textContent = `註冊失敗: ${err.message}`;
-            }
-        };
-
-        window.loginAnonymously = async () => {
-            try {
-                document.getElementById('auth-error').textContent = "建立匿名連線中...";
-                await signInAnonymously(auth);
-            } catch (err) {
-                document.getElementById('auth-error').textContent = `連線失敗: ${err.message}`;
-            }
-        };
-
-        let appBooted = false;
-
-        // 監聽登入狀態：決定顯示 Login UI 或遊戲 Terminal
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                document.getElementById('login-view').classList.add('hidden');
-                document.getElementById('cli-view').classList.remove('hidden');
-                
-                window.myUid = user.uid;
-                
-                // 自動決定代號 (Google 名稱 -> Email 帳號 -> 隨機)
-                let defaultName = user.displayName || (user.email ? user.email.split('@')[0] : null);
-                if (defaultName && typeof window.gameState !== 'undefined') {
-                    window.gameState.handle = defaultName.substring(0, 12);
-                    window.myHandle = window.gameState.handle;
-                }
-
-                if (!appBooted) {
-                    appBooted = true;
-                    if(typeof window.bootTerminal === 'function') window.bootTerminal();
-                    startListeners();
-                }
-            } else {
-                document.getElementById('login-view').classList.remove('hidden');
-                document.getElementById('cli-view').classList.add('hidden');
-            }
-        });
+        let listenersStarted = false;
 
         function getPath(collectionName) {
             return collection(db, collectionName);
         }
-        
+
         function getDocPath(collectionName, docId) {
             return doc(db, collectionName, docId);
         }
 
         function startListeners() {
+           if (listenersStarted) return;
+           listenersStarted = true;
            updatePresence();
            setInterval(updatePresence, 30000); // 心跳包，每30秒更新一次在線狀態
 
@@ -472,7 +457,7 @@
               snapshot.forEach(d => {
                   const p = d.data();
                   // 90 秒內有更新算作在線
-                  if (now - p.lastActive < 90000) { 
+                  if (now - p.lastActive < 90000) {
                       count++;
                       window.onlinePlayers[p.handle] = { uid: d.id, ...p };
                   }
@@ -561,6 +546,15 @@
            updatePresence();
         }
 
+        // 免登入直接以訪客身分連線多人伺服器
+        signInAnonymously(auth).then((cred) => {
+            window.myUid = cred.user.uid;
+            startListeners();
+        }).catch(() => {
+            window.myUid = "guest_" + Math.random().toString(36).slice(2, 10);
+            startListeners();
+        });
+
     } catch (e) { console.warn("Firebase 初始化跳過 (本地環境或缺少設定)", e); }
   </script>
 
@@ -575,7 +569,7 @@
           const AudioContext = window.AudioContext || window.webkitAudioContext;
           if (AudioContext) this.ctx = new AudioContext();
         }
-        if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+        if (this.ctx && this.ctx.state === "suspended") this.ctx.resume();
       }
       play(freq, type, duration, vol = 0.08) {
         if (!this.enabled) return;
@@ -592,14 +586,14 @@
           osc.start(); osc.stop(this.ctx.currentTime + duration);
         } catch (e) {}
       }
-      keyClick() { this.play(550 + Math.random() * 150, 'triangle', 0.025, 0.02); }
-      beep() { this.play(880, 'sine', 0.08, 0.06); }
-      error() { this.play(160, 'sawtooth', 0.2, 0.08); }
+      keyClick() { this.play(550 + Math.random() * 150, "triangle", 0.025, 0.02); }
+      beep() { this.play(880, "sine", 0.08, 0.06); }
+      error() { this.play(160, "sawtooth", 0.2, 0.08); }
       success() {
-        this.play(523.25, 'sine', 0.1, 0.07);
-        setTimeout(() => this.play(783.99, 'sine', 0.2, 0.08), 90);
+        this.play(523.25, "sine", 0.1, 0.07);
+        setTimeout(() => this.play(783.99, "sine", 0.2, 0.08), 90);
       }
-      alarm() { this.play(440, 'square', 0.1, 0.05); }
+      alarm() { this.play(440, "square", 0.1, 0.05); }
     }
     const sfx = new SoundFX();
 
@@ -829,10 +823,12 @@
       crackedHosts: {},
       soundEnabled: true,
       whiteHatTarget: null,
-      handle: null // 新增：玩家自訂代號
+      handle: null
     };
 
     let gameState = loadState();
+    window.gameState = gameState;
+
     let commandHistory = [];
     let historyIndex = -1;
     let isCracking = false;
@@ -842,6 +838,7 @@
     let traceInterval = null;
     let windowZIndex = 100;
     let currentHexGame = null;
+    let terminalBooted = false;
 
     function loadState() {
       try {
@@ -852,10 +849,12 @@
     }
 
     function saveState() {
+      window.gameState = gameState;
       try {
         localStorage.setItem("netrunner_hacker_sim_v6", JSON.stringify(gameState));
       } catch (e) {}
     }
+    window.saveState = saveState;
 
     /* =========================================================================
        4. TERMINAL ENGINE & COMMAND PARSER
@@ -878,35 +877,36 @@
     }
 
     function bootTerminal() {
+      if (terminalBooted) return;
+      terminalBooted = true;
+
       sfx.enabled = gameState.soundEnabled;
       updateSoundBadge();
       updateBtcDisplay();
 
-      // 初始化多人連線玩家代號
       if (!gameState.handle) {
-          gameState.handle = "Anon_" + Math.floor(Math.random() * 9999);
-          saveState();
+        gameState.handle = "Anon_" + Math.floor(Math.random() * 9999);
+        saveState();
       }
       if (window.setMyHandle) window.setMyHandle(gameState.handle);
       else window.myHandle = gameState.handle;
 
-      // 掛載給雲端資料庫呼叫的 UI 渲染函式
       window.renderChatMessages = function(msgs) {
-         const log = document.getElementById("irc-log");
-         log.innerHTML = "";
-         msgs.slice(-25).forEach(m => { // 只顯示最近 25 筆
-             const isSys = m.handle === "SYSTEM";
-             const nameColor = isSys ? "text-purple-500" : (m.handle === window.myHandle ? "text-yellow-400" : "text-cyan-400");
-             const div = document.createElement("div");
-             div.className = "mb-1 leading-tight";
-             div.innerHTML = `<span class="${nameColor} font-bold">[${m.handle}]</span> <span class="${isSys ? 'text-purple-300' : 'text-gray-300'}">${m.text.replace(/</g, "&lt;")}</span>`;
-             log.appendChild(div);
-         });
-         log.scrollTop = log.scrollHeight;
+        const log = document.getElementById("irc-log");
+        log.innerHTML = "";
+        msgs.slice(-25).forEach(m => {
+          const isSys = m.handle === "SYSTEM";
+          const nameColor = isSys ? "text-purple-500" : (m.handle === window.myHandle ? "text-yellow-400" : "text-cyan-400");
+          const div = document.createElement("div");
+          div.className = "mb-1 leading-tight";
+          div.innerHTML = `<span class="${nameColor} font-bold">[${m.handle}]</span> <span class="${isSys ? "text-purple-300" : "text-gray-300"}">${m.text.replace(/</g, "&lt;")}</span>`;
+          log.appendChild(div);
+        });
+        log.scrollTop = log.scrollHeight;
       };
 
       window.updateOnlineCount = function(count) {
-         document.getElementById('online-players-count').textContent = 'Online: ' + count;
+        document.getElementById("online-players-count").textContent = "Online: " + count;
       };
 
       printLine("=================================================================", "text-[#008f11]");
@@ -923,9 +923,9 @@
 
       updateRightSidebar();
       focusTerminalInput();
-      
+
       if (!window.multiplayerActive) {
-         printLine("[系統] 正在連接暗網大廳... (若長時間未連線，請檢查網路環境)", "text-gray-500");
+        printLine("[系統] 正在連接暗網大廳... (若長時間未連線，請檢查網路環境)", "text-gray-500");
       }
     }
 
@@ -976,9 +976,7 @@
       const cmd = parts[0].toLowerCase();
       const arg1 = parts[1];
       const arg2 = parts[2];
-      const arg3 = parts[3];
 
-      // If in SSH Mode
       if (activeSshIp) {
         handleSshCommand(cmd, parts);
         return;
@@ -1001,10 +999,10 @@
           printLine("  decode [type] [str]   - 線上密碼解密 (base64 / rot13)");
           printLine("\n  [線上互動與白帽工會 (MULTIPLAYER)]", "text-cyan-300");
           printLine("  chat [msg]            - 傳送訊息到全球線上大廳 (IRC)");
-          printLine("  setname [name]        - (新增) 更改你在線上大廳的駭客代號");
-          printLine("  whitehat              - (白帽系統) 接取企業隨機漏洞修補懸賞");
-          printLine("  patch [ip]            - (白帽系統) 為已駭入的主機上傳安全更新檔");
-          printLine("  hackplayer [name]     - (PvP) 嘗試駭入線上大廳的其他玩家竊取 BTC");
+          printLine("  setname [name]        - 更改你在線上大廳的駭客代號");
+          printLine("  whitehat              - 接取企業隨機漏洞修補懸賞");
+          printLine("  patch [ip]            - 為已駭入的主機上傳安全更新檔");
+          printLine("  hackplayer [name]     - PvP 嘗試駭入線上大廳的其他玩家竊取 BTC");
           printLine("\n  [系統與裝備]", "text-yellow-300");
           printLine("  shop / buy [item_id]  - 瀏覽與購買暗網裝備 (BTC 交易)");
           printLine("  proxy [on|off]        - 開啟/關閉跳板代理延緩追蹤倒數");
@@ -1067,8 +1065,8 @@
             gameState.scannedPorts[arg1] = true;
             saveState(); sfx.success();
             printLine(`\nNmap 掃描報告 (${arg1}):`, "text-white font-bold");
-            printLine(`主機名稱: ${victimN.hostname || 'UNKNOWN-SERVER'} | OS: ${victimN.type === 'linux' ? 'Linux Mainframe' : 'Windows 11 Pro'}`, "text-cyan-300");
-            printLine(`防火牆狀態: ${victimN.hasFirewall ? (gameState.bypassedFirewalls[arg1] ? '已解鎖 ✓' : '高防禦鎖定中 🔒') : '無防火牆'}`, victimN.hasFirewall && !gameState.bypassedFirewalls[arg1] ? "text-red-400 font-bold" : "text-emerald-400");
+            printLine(`主機名稱: ${victimN.hostname || "UNKNOWN-SERVER"} | OS: ${victimN.type === "linux" ? "Linux Mainframe" : "Windows 11 Pro"}`, "text-cyan-300");
+            printLine(`防火牆狀態: ${victimN.hasFirewall ? (gameState.bypassedFirewalls[arg1] ? "已解鎖 ✓" : "高防禦鎖定中 🔒") : "無防火牆"}`, victimN.hasFirewall && !gameState.bypassedFirewalls[arg1] ? "text-red-400 font-bold" : "text-emerald-400");
             if (victimN.ports) {
               victimN.ports.forEach(p => printLine(`PORT ${p.port} (${p.service}): ${p.state}`, "text-yellow-300"));
             }
@@ -1124,13 +1122,12 @@
           if (vSsh.type !== "linux") {
             sfx.error(); printLine(`[錯誤] ${arg1} 為 Windows 主機，請使用 'rdp ${arg1}' 連線！`, "text-red-400"); return;
           }
-          // Special check for mission 6 core
           if (arg1 === "10.0.0.1" && !gameState.skynetUnlocked) {
             sfx.error(); printLine(`[存取被拒] 10.0.0.1 天網核心 IP 仍被全域鎖定中！必須先入侵 10.0.0.45 Win11 解除核鎖！`, "text-red-500 font-bold"); return;
           }
           activeSshIp = arg1;
           sfx.success();
-          printLine(`\n[SSH] 成功建立加密 Shell 通道 (${vSsh.username || 'root'}@${arg1})`, "text-emerald-300 font-bold");
+          printLine(`\n[SSH] 成功建立加密 Shell 通道 (${vSsh.username || "root"}@${arg1})`, "text-emerald-300 font-bold");
           printLine("輸入 'ls', 'cat [file]', 'scp [file]', 'exit' 進行控制。\n", "text-[#00ff41]");
           document.getElementById("prompt-label").textContent = `root@${arg1}:~#`;
           break;
@@ -1151,9 +1148,6 @@
           }
           break;
 
-        /* ============================
-           MULTIPLAYER & WHITEHAT CMDS
-        ============================ */
         case "setname":
           if (!arg1) { sfx.error(); printLine("[用法] setname [新名稱]", "text-red-400"); return; }
           const newName = arg1.substring(0, 12);
@@ -1168,10 +1162,10 @@
           const msg = parts.slice(1).join(" ");
           sfx.keyClick();
           if (window.sendChatToCloud) {
-              window.sendChatToCloud(msg);
-              printLine(`[Chat] 訊息已發送...`, "text-gray-500");
+            window.sendChatToCloud(msg);
+            printLine(`[Chat] 訊息已發送...`, "text-gray-500");
           } else {
-              printLine(`[Chat] 離線模式，無法傳送訊息。`, "text-red-400");
+            printLine(`[Chat] 離線模式，無法傳送訊息。`, "text-red-400");
           }
           break;
 
@@ -1183,14 +1177,13 @@
             printLine(`請先完成它 (crack 後 patch) 或重置遊戲！\n`, "text-gray-300");
             return;
           }
-          const whIp = `10.99.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*254)+1}`;
+          const whIp = `10.99.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 254) + 1}`;
           gameState.whiteHatTarget = whIp;
           saveState();
           printLine("有企業伺服器遭到黑客入侵風險，急需白帽支援修補 0-day 漏洞！", "text-gray-300");
           printLine(`目標主機 (企業受害 IP): ${whIp}`, "text-yellow-300 font-bold");
           printLine(`任務目標: 執行 'crack ${whIp} 3389' 取得權限，然後執行 'patch ${whIp}' 部署安全修補程式。`, "text-[#00ff41]");
           printLine("成功修補將可獲得 150 BTC 白帽企業賞金！\n", "text-emerald-300 font-bold");
-          // Dynamically add the target to VICTIM_SYSTEMS so it can be cracked
           VICTIM_SYSTEMS[whIp] = { ip: whIp, hasFirewall: false, ports: [{ port: 3389, service: "MS-WBT-SERVER (RDP)", state: "open" }] };
           if (!gameState.discoveredHosts.includes(whIp)) {
             gameState.discoveredHosts.push(whIp);
@@ -1208,14 +1201,14 @@
           }
           sfx.success();
           gameState.btc += 150;
-          gameState.whiteHatTarget = null; // Clear the bounty
+          gameState.whiteHatTarget = null;
           saveState();
           updateBtcDisplay();
-          if(window.updatePresence) window.updatePresence(); // 更新雲端資產
+          if (window.updatePresence) window.updatePresence();
           printLine(`\n[🛡️ 漏洞修補成功] 已成功為 ${arg1} 佈署安全 Patch，防禦升級完畢！`, "text-cyan-400 font-bold");
           printLine(`企業匯款完成，獲得白帽賞金: +150 BTC\n`, "text-yellow-300 font-bold matrix-glow");
           if (window.sendChatToCloud) {
-              window.sendChatToCloud(`【工會廣播】我剛剛成功修補了一個企業的 0-day 漏洞，獲得 150 BTC！`);
+            window.sendChatToCloud(`【工會廣播】我剛剛成功修補了一個企業的 0-day 漏洞，獲得 150 BTC！`);
           }
           break;
 
@@ -1223,27 +1216,27 @@
           if (!arg1) { sfx.error(); printLine("[用法] hackplayer [玩家名稱]", "text-red-400"); return; }
           sfx.beep();
           printLine(`\n正在對線上玩家 [${arg1}] 發起強制入侵攻擊...`, "text-purple-400 font-bold");
-          
+
           if (!window.attackPlayerCloud) {
-              printLine(`[錯誤] 離線模式，無法進行 PvP 攻擊。`, "text-red-400"); return;
+            printLine(`[錯誤] 離線模式，無法進行 PvP 攻擊。`, "text-red-400"); return;
           }
-          
+
           window.attackPlayerCloud(arg1).then(result => {
-             if (result.success) {
-                 gameState.btc += result.loot; saveState(); updateBtcDisplay(); sfx.success();
-                 printLine(`[💀 PvP 入侵成功] 成功突破 ${arg1} 的防禦牆！竊取了 ${result.loot} BTC！\n`, "text-emerald-300 font-bold");
-                 if(window.updatePresence) window.updatePresence(); // 同步新資產到雲端
-             } else {
-                 if (result.reason === "NotFound") {
-                     sfx.error(); printLine(`[錯誤] 找不到玩家 ${arg1}，請確認大廳中顯示的在線代號。`, "text-gray-400");
-                 } else if (result.reason === "Self") {
-                     sfx.error(); printLine(`[錯誤] 你無法對自己發動駭客攻擊！`, "text-red-400");
-                 } else {
-                     sfx.error();
-                     printLine(`[❌ PvP 入侵失敗] ${arg1} 的主動防禦反彈了你的攻擊，警方反向追蹤已觸發！\n`, "text-red-500 font-bold");
-                     startTraceTimer(15);
-                 }
-             }
+            if (result.success) {
+              gameState.btc += result.loot; saveState(); updateBtcDisplay(); sfx.success();
+              printLine(`[💀 PvP 入侵成功] 成功突破 ${arg1} 的防禦牆！竊取了 ${result.loot} BTC！\n`, "text-emerald-300 font-bold");
+              if (window.updatePresence) window.updatePresence();
+            } else {
+              if (result.reason === "NotFound") {
+                sfx.error(); printLine(`[錯誤] 找不到玩家 ${arg1}，請確認大廳中顯示的在線代號。`, "text-gray-400");
+              } else if (result.reason === "Self") {
+                sfx.error(); printLine(`[錯誤] 你無法對自己發動駭客攻擊！`, "text-red-400");
+              } else {
+                sfx.error();
+                printLine(`[❌ PvP 入侵失敗] ${arg1} 的主動防禦反彈了你的攻擊，警方反向追蹤已觸發！\n`, "text-red-500 font-bold");
+                startTraceTimer(15);
+              }
+            }
           });
           break;
 
@@ -1254,7 +1247,7 @@
           Object.keys(SHOP_ITEMS).forEach(key => {
             const item = SHOP_ITEMS[key];
             const bought = gameState.inventory.includes(key);
-            printLine(`  [${key}] ${item.name} - ${item.price} BTC ${bought ? '(已擁有 ✓)' : ''}`, bought ? "text-gray-400" : "text-cyan-300 font-bold");
+            printLine(`  [${key}] ${item.name} - ${item.price} BTC ${bought ? "(已擁有 ✓)" : ""}`, bought ? "text-gray-400" : "text-cyan-300 font-bold");
             printLine(`      說明: ${item.desc}`, "text-[#00aa2b]");
           });
           printLine("\n輸入 'buy [ID]' 購買升級 (例如: buy proxy2)\n", "text-[#99f5b0]");
@@ -1295,11 +1288,13 @@
           gameState.soundEnabled = (arg1 === "on");
           sfx.enabled = gameState.soundEnabled;
           saveState(); updateSoundBadge();
-          printLine(`[系統] 音效: ${gameState.soundEnabled ? '開啟' : '靜音'}`, "text-[#00ff41]");
+          printLine(`[系統] 音效: ${gameState.soundEnabled ? "開啟" : "靜音"}`, "text-[#00ff41]");
           break;
         case "reset":
           localStorage.removeItem("netrunner_hacker_sim_v6");
           gameState = { ...DEFAULT_STATE };
+          window.gameState = gameState;
+          terminalBooted = false;
           stopTraceTimer(); termOutput.innerHTML = "";
           printLine("[系統] 存檔已重置。", "text-yellow-300");
           bootTerminal();
@@ -1310,7 +1305,6 @@
       }
     }
 
-    /* SSH Command Sub-handler */
     function handleSshCommand(cmd, parts) {
       const v = VICTIM_SYSTEMS[activeSshIp];
       if (cmd === "exit") {
@@ -1323,7 +1317,7 @@
       if (cmd === "ls") {
         sfx.beep();
         printLine("檔案清單:", "text-cyan-300");
-        v.linuxFiles.forEach(f => printLine(`  ${f.target ? '🔐' : '📄'} ${f.name}`, f.target ? "text-amber-300 font-bold" : "text-white"));
+        v.linuxFiles.forEach(f => printLine(`  ${f.target ? "🔐" : "📄"} ${f.name}`, f.target ? "text-amber-300 font-bold" : "text-white"));
       } else if (cmd === "cat") {
         const fname = parts[1];
         const f = v.linuxFiles.find(x => x.name === fname);
@@ -1338,10 +1332,9 @@
           sfx.error(); printLine("[錯誤] 請指定正確的目標檔案。", "text-red-400");
         }
       } else if (cmd === "exec") {
-        // For Mission 5 script execution
         if (v.scriptRequired) {
           const rawStr = parts.join(" ");
-          if (rawStr.includes("--token 994821") && (rawStr.includes("--key KEY_FREE_99") || rawStr.includes("--key KEY_FREE_99"))) {
+          if (rawStr.includes("--token 994821") && rawStr.includes("--key KEY_FREE_99")) {
             exfiltrateTargetFile(5, "軍火商庫房資金轉移認證 ($2,500,000 USD)");
           } else {
             sfx.error(); printLine("[腳本執行失敗] 2FA 令牌或解密金鑰不正確！", "text-red-400 font-bold");
@@ -1385,7 +1378,6 @@
       document.getElementById("hex-target-seq").textContent = targetSeq.join(" - ");
       document.getElementById("hex-current-seq").textContent = "--";
 
-      // Generate 4x4 Grid with random hex values + target hex values
       const grid = document.getElementById("hex-grid");
       grid.innerHTML = "";
       const hexPool = ["00", "7E", "B1", "3F", "FE", "10", "D9", "A5", "4A", "8F", "C2", "99", "FF", "EE", "77", "A1", "C9"];
@@ -1426,7 +1418,6 @@
       document.getElementById("hex-current-seq").textContent = currentHexGame.userSeq.join(" - ");
 
       if (currentHexGame.userSeq.length === currentHexGame.targetSeq.length) {
-        // Check match
         const match = currentHexGame.userSeq.every((v, idx) => v === currentHexGame.targetSeq[idx]);
         if (match) {
           const targetIp = currentHexGame.ip;
@@ -1450,7 +1441,7 @@
       document.querySelectorAll(".hex-cell").forEach(b => b.classList.remove("selected"));
     }
 
-    function closeHexGame(success) {
+    function closeHexGame() {
       if (currentHexGame && currentHexGame.timer) clearInterval(currentHexGame.timer);
       currentHexGame = null;
       document.getElementById("hex-game-modal").classList.add("hidden");
@@ -1470,7 +1461,7 @@
       const hasQuantum = gameState.inventory.includes("quantum_cracker");
       const speedStep = hasQuantum ? 18 : 6;
 
-      label.textContent = `爆破中: ${ip}:3389 (NTLM) ${hasQuantum ? '[量子加速中]' : ''}...`;
+      label.textContent = `爆破中: ${ip}:3389 (NTLM) ${hasQuantum ? "[量子加速中]" : ""}...`;
       box.classList.remove("hidden");
       let progress = 0;
 
@@ -1490,8 +1481,7 @@
             gameState.crackedHosts[ip] = pass;
             saveState(); sfx.success();
             printLine(`\n[破解成功 ✓] ${ip}:3389 RDP 密碼: ${pass}`, "text-emerald-300 font-bold");
-            
-            // Check if it's the whitehat target
+
             if (ip === gameState.whiteHatTarget) {
               printLine(`白帽目標解鎖！請輸入 'patch ${ip}' 以佈署安全更新檔！\n`, "text-cyan-300 font-bold");
             } else {
@@ -1514,7 +1504,6 @@
       updateTraceDisplays(formatSeconds(traceTimeLeft), true);
 
       traceInterval = setInterval(() => {
-        // Calculate speed factor (proxy slows down trace)
         let proxyMult = 1.0;
         if (gameState.isProxyEnabled) {
           if (gameState.activeProxyLevel === 2) proxyMult = 0.6;
@@ -1599,9 +1588,9 @@
           const isWhiteHat = (ip === gameState.whiteHatTarget);
           return `
             <div class="flex items-center justify-between bg-black/50 px-2 py-1 rounded border border-[#00ff41]/20">
-              <span class="text-white font-mono flex items-center gap-1">${ip} ${isWhiteHat ? '<span class="text-cyan-400" title="白帽懸賞目標">🛡️</span>' : ''}</span>
-              <span class="${cracked ? 'text-emerald-400 font-bold' : 'text-yellow-400'}">
-                ${cracked ? '已解鎖 ✓' : '未解鎖'}
+              <span class="text-white font-mono flex items-center gap-1">${ip} ${isWhiteHat ? '<span class="text-cyan-400" title="白帽懸賞目標">🛡️</span>' : ""}</span>
+              <span class="${cracked ? "text-emerald-400 font-bold" : "text-yellow-400"}">
+                ${cracked ? "已解鎖 ✓" : "未解鎖"}
               </span>
             </div>
           `;
@@ -1615,14 +1604,13 @@
     function connectToRDP(ip) {
       const victim = VICTIM_SYSTEMS[ip];
       if (!victim) return;
-      
-      // Stop RDP into simple generated whitehat targets if they lack full Win11 structures
+
       if (ip === gameState.whiteHatTarget) {
-          sfx.error();
-          printLine(`[提示] 此伺服器為單純漏洞修補懸賞目標，無須 RDP 登入桌面。請直接輸入 'patch ${ip}'。`, "text-cyan-300 font-bold");
-          return;
+        sfx.error();
+        printLine(`[提示] 此伺服器為單純漏洞修補懸賞目標，無須 RDP 登入桌面。請直接輸入 'patch ${ip}'。`, "text-cyan-300 font-bold");
+        return;
       }
-      
+
       activeRdpIp = ip; sfx.beep();
 
       const trans = document.getElementById("rdp-transition");
@@ -1770,7 +1758,6 @@
       else if (appType === "cmd") renderWinCmd();
     }
 
-    /* Win11 Task Manager App */
     function renderTaskManager() {
       const html = `
         <div class="p-4 space-y-3 bg-[#181b22] h-full flex flex-col justify-between">
@@ -1831,7 +1818,6 @@
       if (procName === "AIDefence.exe") gameState.aiProcKilled = true;
     }
 
-    /* Win11 CMD App */
     function renderWinCmd() {
       const victim = VICTIM_SYSTEMS[activeRdpIp];
       const html = `
@@ -1842,7 +1828,7 @@
             <div class="mt-2 text-yellow-300">可執行命令: ipconfig, net user, dir</div>
           </div>
           <div class="flex items-center gap-2 border-t border-gray-800 pt-2">
-            <span>C:\\Users\\${victim ? victim.username : 'User'}&gt;</span>
+            <span>C:\\Users\\${victim ? victim.username : "User"}&gt;</span>
             <input id="wincmd-input" type="text" class="flex-1 bg-transparent outline-none text-white font-mono" onkeydown="handleWinCmdInput(event)" />
           </div>
         </div>
@@ -1860,24 +1846,24 @@
         sfx.keyClick();
 
         const line = document.createElement("div");
-        line.textContent = `C:\\Users\\${victim ? victim.username : 'User'}> ${val}`;
+        line.textContent = `C:\\Users\\${victim ? victim.username : "User"}> ${val}`;
         line.className = "text-white font-bold mt-1";
         out.appendChild(line);
 
         if (val === "ipconfig") {
           const resp = document.createElement("div");
           resp.className = "text-gray-300";
-          resp.innerHTML = `IPv4 Address . . . . . . . . . . . : ${victim ? victim.ip : '192.168.1.1'}<br>Subnet Mask . . . . . . . . . . . : 255.255.255.0<br>Default Gateway . . . . . . . . . : ${victim ? victim.ip.replace(/\.\d+$/, '.1') : '192.168.1.1'}`;
+          resp.innerHTML = `IPv4 Address . . . . . . . . . . . : ${victim ? victim.ip : "192.168.1.1"}<br>Subnet Mask . . . . . . . . . . . : 255.255.255.0<br>Default Gateway . . . . . . . . . : ${victim ? victim.ip.replace(/\.\d+$/, ".1") : "192.168.1.1"}`;
           out.appendChild(resp);
         } else if (val === "net user") {
           const resp = document.createElement("div");
           resp.className = "text-gray-300";
-          resp.innerHTML = `User accounts for \\\\${victim ? victim.hostname : 'PC'}:<br>--------------------------------------------------<br>Administrator     ${victim ? victim.username : 'User'}     Guest`;
+          resp.innerHTML = `User accounts for \\\\${victim ? victim.hostname : "PC"}:<br>--------------------------------------------------<br>Administrator     ${victim ? victim.username : "User"}     Guest`;
           out.appendChild(resp);
         } else if (val === "dir") {
           const resp = document.createElement("div");
           resp.className = "text-gray-300";
-          resp.innerHTML = `Directory of C:\\Users\\${victim ? victim.username : 'User'}<br>2026/11/20  20:14    &lt;DIR&gt;          Desktop<br>2026/11/20  20:14    &lt;DIR&gt;          Documents<br>2026/11/20  20:14    &lt;DIR&gt;          Downloads`;
+          resp.innerHTML = `Directory of C:\\Users\\${victim ? victim.username : "User"}<br>2026/11/20  20:14    &lt;DIR&gt;          Desktop<br>2026/11/20  20:14    &lt;DIR&gt;          Documents<br>2026/11/20  20:14    &lt;DIR&gt;          Downloads`;
           out.appendChild(resp);
         } else {
           const resp = document.createElement("div");
@@ -1888,7 +1874,6 @@
       }
     }
 
-    /* Win11 File Explorer App */
     function renderFileExplorer(folderKey) {
       const victim = VICTIM_SYSTEMS[activeRdpIp];
       const folderNames = { desktop: "桌面", documents: "文件", downloads: "下載", recycle: "資源回收筒" };
@@ -1899,16 +1884,16 @@
         return `
           <div class="flex items-center justify-between px-3 py-2 border-b border-white/5 hover:bg-white/10 rounded">
             <div class="flex items-center gap-2 flex-1 cursor-pointer" onclick="inspectVictimFile('${folderKey}', ${idx})">
-              <span>${f.type === 'zip' ? '📦' : isTarget ? '🔐' : '📄'}</span>
+              <span>${f.type === "zip" ? "📦" : isTarget ? "🔐" : "📄"}</span>
               <div>
-                <div class="font-medium ${isTarget ? 'text-amber-300 font-bold' : 'text-gray-100'}">${f.name}</div>
+                <div class="font-medium ${isTarget ? "text-amber-300 font-bold" : "text-gray-100"}">${f.name}</div>
                 <div class="text-[11px] text-gray-400">${f.date} • ${f.size}</div>
               </div>
             </div>
             <div class="flex gap-2">
               <button onclick="inspectVictimFile('${folderKey}', ${idx})" class="px-2 py-1 bg-white/10 rounded text-xs">檢視</button>
-              ${f.type === 'target' ? `<button onclick="exfiltrateTargetFile(${f.missionId}, '${f.name}')" class="px-2 py-1 bg-emerald-600 hover:bg-emerald-500 font-bold rounded text-xs text-white">回傳</button>` : ''}
-              ${f.type === 'deletable_target' ? `<button onclick="deleteTargetFile(${f.missionId}, '${f.name}', '${folderKey}', ${idx})" class="px-2 py-1 bg-red-600 hover:bg-red-500 font-bold rounded text-xs text-white">刪除紀錄</button>` : ''}
+              ${f.type === "target" ? `<button onclick="exfiltrateTargetFile(${f.missionId}, '${f.name}')" class="px-2 py-1 bg-emerald-600 hover:bg-emerald-500 font-bold rounded text-xs text-white">回傳</button>` : ""}
+              ${f.type === "deletable_target" ? `<button onclick="deleteTargetFile(${f.missionId}, '${f.name}', '${folderKey}', ${idx})" class="px-2 py-1 bg-red-600 hover:bg-red-500 font-bold rounded text-xs text-white">刪除紀錄</button>` : ""}
             </div>
           </div>
         `;
@@ -1982,7 +1967,7 @@
     function openNotepadFile(fileName, content, targetMeta = null) {
       const html = `
         <div class="flex flex-col h-full bg-[#1e222a]">
-          ${targetMeta ? `<div class="bg-amber-500/20 px-3 py-2 border-b border-amber-400/40 flex justify-between items-center"><span class="text-xs text-amber-200 font-bold">⚠ 發現目標檔案！</span><button onclick="exfiltrateTargetFile(${targetMeta.missionId}, '${targetMeta.fileName}')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded">竊取並回傳</button></div>` : ''}
+          ${targetMeta ? `<div class="bg-amber-500/20 px-3 py-2 border-b border-amber-400/40 flex justify-between items-center"><span class="text-xs text-amber-200 font-bold">⚠ 發現目標檔案！</span><button onclick="exfiltrateTargetFile(${targetMeta.missionId}, '${targetMeta.fileName}')" class="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded">竊取並回傳</button></div>` : ""}
           <div class="p-3 font-mono text-xs text-gray-100 leading-relaxed whitespace-pre-wrap flex-1 overflow-y-auto selectable-text">${content}</div>
         </div>
       `;
@@ -2003,7 +1988,7 @@
               <button onclick="triggerEdgePortalAction('${edge.missionId}')" class="mt-3 px-4 py-2 bg-red-600 hover:bg-red-500 font-bold text-white rounded cursor-pointer">
                 ⚡ ${edge.portalActionName}
               </button>
-            ` : ''}
+            ` : ""}
           </div>
 
           ${edge.savedPasswords && edge.savedPasswords.length > 0 ? `
@@ -2017,9 +2002,9 @@
                   </div>
                   <div class="font-mono text-amber-300 font-bold bg-black/60 px-2 py-1 rounded">${p.pass}</div>
                 </div>
-              `).join('')}
+              `).join("")}
             </div>
-          ` : ''}
+          ` : ""}
         </div>
       `;
       createWin11Window({ id: "edge", title: "Microsoft Edge", icon: "🌐", contentHtml: html });
@@ -2053,7 +2038,7 @@
         const reward = MISSIONS[missionId] ? MISSIONS[missionId].reward : 500;
         gameState.btc += reward;
         saveState();
-        if(window.updatePresence) window.updatePresence();
+        if (window.updatePresence) window.updatePresence();
       }
 
       stopTraceTimer();
@@ -2070,9 +2055,10 @@
       printLine(`======================================================\n`, "text-emerald-400");
     }
 
-    window.bootTerminal = bootTerminal; // 暴露給 Firebase 驗證模組呼叫
-    
-    // 遊戲載入流程已改由 onAuthStateChanged (登入驗證成功後) 自動觸發
+    window.bootTerminal = bootTerminal;
+    window.addEventListener("DOMContentLoaded", () => {
+      bootTerminal();
+    });
   </script>
 </body>
 </html>
