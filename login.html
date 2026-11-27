@@ -92,6 +92,7 @@
       GoogleAuthProvider,
       signInWithEmailAndPassword,
       createUserWithEmailAndPassword,
+      sendEmailVerification,
       sendPasswordResetEmail,
       onAuthStateChanged
     } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
@@ -183,9 +184,21 @@
       if (!email || !pass) return setStatusMsg("請輸入電子郵件與密碼", "text-red-400");
       if (pass.length < 6) return setStatusMsg("註冊失敗：密碼至少需要 6 個字元", "text-red-400");
       try {
-        setStatusMsg("建立帳號中...", "text-cyan-300");
+        setStatusMsg("建立帳號並寄送認證信箱中...", "text-cyan-300");
         const cred = await createUserWithEmailAndPassword(auth, email, pass);
-        redirectToIndex(cred.user);
+        syncUserHandleToStorage(cred.user);
+
+        try {
+          await sendEmailVerification(cred.user);
+          setStatusMsg(`註冊成功！認證信已寄至 ${email}，請前往信箱完成驗證（含垃圾郵件匣），即將進入主控台...`, "text-emerald-400");
+        } catch (verifyErr) {
+          console.warn("寄送認證信失敗:", verifyErr);
+          setStatusMsg(`帳號已建立，但認證信寄送失敗 (${verifyErr?.code || "error"})，即將進入主控台...`, "text-yellow-300");
+        }
+
+        setTimeout(() => {
+          redirectToIndex(cred.user);
+        }, 2000);
       } catch (err) {
         setStatusMsg(formatAuthError(err), "text-red-400");
       }
@@ -218,7 +231,7 @@
       if (!user || redirected) return;
       redirected = true;
       syncUserHandleToStorage(user);
-      setStatusMsg("身分驗證成功，正在導向 ...", "text-emerald-400");
+      setStatusMsg("身分驗證成功，正在導向 index.html...", "text-emerald-400");
       window.location.href = "index.html";
     }
 
