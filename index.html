@@ -417,7 +417,7 @@
   ========================================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-    import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    import { getAuth, signInAnonymously, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
     import { getFirestore, doc, setDoc, onSnapshot, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -571,6 +571,15 @@
       window.setMyHandle = (newHandle) => {
         window.myHandle = newHandle;
         updatePresence();
+      };
+
+      window.logoutToLogin = async () => {
+        try {
+          await signOut(auth);
+        } catch (err) {
+          console.warn("Firebase signOut 跳過:", err);
+        }
+        window.location.href = "login.html";
       };
     } catch (e) { console.warn("Firebase 初始化跳過 (本地環境或缺少設定)", e); }
   </script>
@@ -1041,7 +1050,7 @@
     const AVAILABLE_COMMANDS = [
       "help", "missions", "accept", "scan", "nmap", "analyze", "bypass",
       "crack", "rdp", "ssh", "decode", "shop", "buy", "proxy", "clear", "sound", "reset",
-      "chat", "whitehat", "patch", "hackplayer", "setname", "bounty", "claim", "drill"
+      "chat", "whitehat", "patch", "hackplayer", "setname", "bounty", "claim", "drill", "logout"
     ];
 
     termInput.addEventListener("keydown", (e) => {
@@ -1118,7 +1127,8 @@
           printLine("\n  [系統與裝備]", "text-yellow-300");
           printLine("  shop / buy [item_id]  - 瀏覽與購買暗網裝備 (BTC 交易)");
           printLine("  proxy [on|off]        - 開啟/關閉跳板代理延緩追蹤倒數");
-          printLine("  clear / sound / reset - 系統設定\n");
+          printLine("  clear / sound / reset - 系統設定");
+          printLine("  logout                - 登出帳號並返回 login.html\n");
           break;
 
         case "bounty":
@@ -1500,6 +1510,10 @@
           bootTerminal();
           break;
 
+        case "logout":
+          logoutAccount();
+          break;
+
         default:
           sfx.error(); printLine(`[指令無效] '${cmd}'。輸入 'help' 查看說明。`, "text-red-400");
       }
@@ -1564,6 +1578,16 @@
     }
     function updateSoundBadge() {
       document.getElementById("sound-status-badge").textContent = `音效: ${gameState.soundEnabled ? "開啟" : "靜音"}`;
+    }
+
+    function logoutAccount() {
+      sfx.beep();
+      printLine("[系統] 正在中斷矩陣連線並登出，導向 login.html...", "text-yellow-300");
+      if (typeof window.logoutToLogin === "function") {
+        window.logoutToLogin();
+      } else {
+        window.location.href = "login.html";
+      }
     }
 
     /* =========================================================================
