@@ -413,12 +413,12 @@
   </div>
 
   <!-- =========================================================
-       FIREBASE MULTIPLAYER MODULE (AUTO-CONNECT)
+       FIREBASE MULTIPLAYER & CLOUD SAVE MODULE
   ========================================================== -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, onSnapshot, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, onSnapshot, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDgYczLHRiBLM7AFfmCd_sUHdrgMPhK60M",
@@ -445,14 +445,17 @@
         if (user) {
           window.myUid = user.uid;
           const defaultName = user.displayName || (user.email ? user.email.split("@")[0] : null);
-          if (defaultName && typeof window.gameState !== "undefined" && !window.gameState.handle) {
-            window.gameState.handle = defaultName.substring(0, 12);
-            window.myHandle = window.gameState.handle;
-            if (window.saveState) window.saveState();
+
+          // 依登入的帳號 UID 載入專屬本地快取，並嘗試從 Firestore 讀取雲端存檔
+          if (typeof window.switchAccountSave === "function") {
+            await window.switchAccountSave(user.uid, defaultName);
           }
+
           if (!listenersStarted) {
             listenersStarted = true;
             startListeners();
+          } else {
+            updatePresence();
           }
         } else {
           try {
@@ -475,6 +478,33 @@
       function getDocPath(collectionName, docId) {
         return doc(db, collectionName, docId);
       }
+
+      // 讀取該帳號在 Cloud Firestore 的存檔
+      window.loadCloudSave = async (uid) => {
+        if (!uid) return null;
+        try {
+          const snap = await getDoc(getDocPath("user_saves", uid));
+          if (snap.exists()) {
+            return snap.data().saveData || null;
+          }
+        } catch (err) {
+          console.warn("讀取雲端存檔失敗:", err);
+        }
+        return null;
+      };
+
+      // 將目前帳號的遊戲進度寫入 Cloud Firestore
+      window.saveCloudSave = async (uid, saveObj) => {
+        if (!uid || !saveObj) return;
+        try {
+          await setDoc(getDocPath("user_saves", uid), {
+            saveData: saveObj,
+            updatedAt: Date.now()
+          }, { merge: true });
+        } catch (err) {
+          console.warn("寫入雲端存檔失敗:", err);
+        }
+      };
 
       function startListeners() {
         updatePresence();
@@ -527,6 +557,7 @@
           await setDoc(getDocPath("players", window.myUid), {
             handle: window.myHandle,
             btc: typeof window.gameState !== "undefined" ? window.gameState.btc : 0,
+            reputation: typeof window.gameState !== "undefined" ? window.gameState.reputation : 0,
             lastActive: Date.now()
           }, { merge: true });
         } catch (e) { console.error("Presence err", e); }
@@ -574,6 +605,9 @@
       };
 
       window.logoutToLogin = async () => {
+        if (typeof window.flushSave === "function") {
+          await window.flushSave();
+        }
         try {
           await signOut(auth);
         } catch (err) {
@@ -882,10 +916,16 @@
     let currentHexGame = null;
     let activeBounty = null;
     let bountyTimer = null;
+    let terminalBooted = false;
 
-    function loadState() {
+    function getStorageKeyForUid(uid) {
+      return uid ? `netrunner_hacker_sim_v6_${uid}` : "netrunner_hacker_sim_v6_guest";
+    }
+
+    function loadState(uid = window.myUid) {
       try {
-        const saved = localStorage.getItem("netrunner_hacker_sim_v6");
+        const key = getStorageKeyForUid(uid);
+        const saved = localStorage.getItem(key);
         if (saved) return { ...DEFAULT_STATE, ...JSON.parse(saved) };
       } catch (e) {}
       return { ...DEFAULT_STATE };
@@ -893,78 +933,66 @@
 
     function saveState() {
       try {
-        localStorage.setItem("netrunner_hacker_sim_v6", JSON.stringify(gameState));
+        const key = getStorageKeyForUid(window.myUid);
+        localStorage.setItem(key, JSON.stringify(gameState));
+        window.gameState = gameState;
+        if (window.myUid && typeof window.saveCloudSave === "function") {
+          window.saveCloudSave(window.myUid, gameState);
+        }
       } catch (e) {}
     }
 
-    function getRankInfo(rep) {
-      if (rep >= 500) return { level: 5, title: "暗網傳奇" };
-      if (rep >= 300) return { level: 4, title: "幽靈操盤手" };
-      if (rep >= 150) return { level: 3, title: "滲透專家" };
-      if (rep >= 60) return { level: 2, title: "網路行者" };
-      return { level: 1, title: "新手" };
-    }
-
-    function adjustReputation(delta, reason = "", resetComboOnLoss = false) {
-      if (delta > 0) {
-        gameState.combo += 1;
-        const comboBonus = Math.min(gameState.combo - 1, 5) * 5;
-        const totalGain = delta + comboBonus;
-        gameState.reputation += totalGain;
-        printLine(`[聲望 +${totalGain}] ${reason ? reason + " " : ""}(連擊 x${gameState.combo})`, "text-cyan-300 font-bold");
-      } else {
-        gameState.reputation = Math.max(0, gameState.reputation + delta);
-        if (resetComboOnLoss) gameState.combo = 0;
-        printLine(`[聲望 ${delta}] ${reason ? reason + " " : ""}(連擊已重置)`, "text-red-400 font-bold");
-      }
-      saveState();
-      updateRepDisplay();
-    }
-
-    function updateRepDisplay() {
-      const rank = getRankInfo(gameState.reputation);
-      const comboText = gameState.combo > 1 ? ` · 🔥x${gameState.combo}` : "";
-      document.getElementById("rep-display").textContent = `Lv.${rank.level} ${rank.title} (${gameState.reputation})${comboText}`;
-    }
-
-    /* =========================================================================
-       4. TERMINAL ENGINE & COMMAND PARSER
-    ========================================================================= */
-    const termOutput = document.getElementById("terminal-output");
-    const termInput = document.getElementById("terminal-input");
-
-    function printLine(text, colorClass = "text-[#00ff41]", isHtml = false) {
-      const div = document.createElement("div");
-      div.className = `${colorClass} whitespace-pre-wrap break-words`;
-      if (isHtml) div.innerHTML = text; else div.textContent = text;
-      termOutput.appendChild(div);
-      termOutput.scrollTop = termOutput.scrollHeight;
-    }
-
-    function focusTerminalInput() {
-      if (!document.getElementById("cli-view").classList.contains("hidden")) {
-        termInput.focus();
-      }
-    }
-
-    function spawnBountyEvent(manual = false) {
-      if (activeBounty) {
-        if (manual) {
-          printLine(`[懸賞進行中] 目標：${activeBounty.title} | 剩餘 ${activeBounty.timeLeft}s | 報酬 ${activeBounty.reward} BTC`, "text-amber-300 font-bold");
-          if (activeBounty.type === "hex_drill") {
-            printLine(`指令：輸入 'claim hex' 開啟 12 秒限時 Hex 繞過搶標！`, "text-yellow-300");
-          } else {
-            printLine(`密文：${activeBounty.cipher} — 解密後輸入 'claim [明文]' 搶標！`, "text-yellow-300");
-          }
+    window.saveState = saveState;
+    window.flushSave = async () => {
+      try {
+        const key = getStorageKeyForUid(window.myUid);
+        localStorage.setItem(key, JSON.stringify(gameState));
+        if (window.myUid && typeof window.saveCloudSave === "function") {
+          await window.saveCloudSave(window.myUid, gameState);
         }
-        return;
+      } catch (e) {}
+    };
+
+    // 依登入帳號切換對應存檔（優先比對雲端存檔進度，避免換帳號共用同一份快取）
+    window.switchAccountSave = async (uid, defaultName = null) => {
+      stopTraceTimer();
+      activeRdpIp = null;
+      activeSshIp = null;
+      document.getElementById("rdp-view").classList.add("hidden");
+      document.getElementById("cli-view").classList.remove("hidden");
+      document.getElementById("prompt-label").textContent = "root@netrunner:~#";
+
+      const localAccState = loadState(uid);
+      const cloudAccState = typeof window.loadCloudSave === "function" ? await window.loadCloudSave(uid) : null;
+
+      let chosen = { ...DEFAULT_STATE, ...localAccState };
+      if (cloudAccState) {
+        const localScore = (chosen.reputation || 0) + (chosen.btc || 0) + ((chosen.completedMissions || []).length * 100);
+        const cloudScore = (cloudAccState.reputation || 0) + (cloudAccState.btc || 0) + ((cloudAccState.completedMissions || []).length * 100);
+        if (cloudScore >= localScore) {
+          chosen = { ...DEFAULT_STATE, ...cloudAccState };
+        }
       }
 
-      const tpl = BOUNTY_TEMPLATES[Math.floor(Math.random() * BOUNTY_TEMPLATES.length)];
-      activeBounty = {
-        ...tpl,
-        timeLeft: 45
-      };
+      if (!chosen.handle) {
+        chosen.handle = defaultName ? defaultName.substring(0, 12) : "Anon_" + Math.floor(Math.random() * 9999);
+      }
+
+      gameState = chosen;
+      window.gameState = gameState;
+      localStorage.setItem(getStorageKeyForUid(uid), JSON.stringify(gameState));
+
+      if (!terminalBooted) {
+        terminalBooted = true;
+        bootTerminal();
+      } else {
+        termOutput.innerHTML = "";
+        bootTerminal();
+      }
+
+      if (window.setMyHandle) window.setMyHandle(gameState.handle);
+      else window.myHandle = gameState.handle;
+    };
 
       sfx.alarm();
       printLine(`\n⚡ [暗網突發懸賞] ${activeBounty.title} (限時 45 秒 / 賞金 ${activeBounty.reward} BTC)`, "text-amber-300 font-bold");
@@ -1502,10 +1530,12 @@
           printLine(`[系統] 音效: ${gameState.soundEnabled ? "開啟" : "靜音"}`, "text-[#00ff41]");
           break;
         case "reset":
-          localStorage.removeItem("netrunner_hacker_sim_v6");
+          localStorage.removeItem(getStorageKeyForUid(window.myUid));
           gameState = { ...DEFAULT_STATE };
+          window.gameState = gameState;
+          saveState();
           stopTraceTimer(); termOutput.innerHTML = "";
-          printLine("[系統] 存檔已重置。", "text-yellow-300");
+          printLine("[系統] 目前帳號存檔已重置。", "text-yellow-300");
           updateRepDisplay();
           bootTerminal();
           break;
@@ -2318,7 +2348,10 @@
     }
 
     window.addEventListener("DOMContentLoaded", () => {
-      bootTerminal();
+      if (!terminalBooted && !window.myUid) {
+        terminalBooted = true;
+        bootTerminal();
+      }
     });
   </script>
 </body>
