@@ -148,6 +148,7 @@
         <span class="text-[#00ff41]">聲望: <strong id="rep-display" class="text-cyan-300">Lv.1 新手 (0)</strong></span>
         <span id="proxy-badge" class="px-2 py-0.5 rounded border border-gray-600 text-gray-400">PROXY: 未關聯</span>
         <span id="sound-status-badge" class="px-2 py-0.5 rounded border border-[#00ff41]/40 text-[#00ff41] cursor-pointer" onclick="toggleSoundFromBadge()">音效: 開啟</span>
+        <button id="pvp-arena-btn" type="button" onclick="openPvpArenaModal()" class="px-2.5 py-0.5 rounded border border-purple-400/70 bg-purple-950/60 hover:bg-purple-900/80 text-purple-200 font-bold cursor-pointer transition-colors">⚔️ PvP 賭金大廳</button>
         <button id="logout-btn" type="button" onclick="logoutAccount()" class="px-2.5 py-0.5 rounded border border-red-500/60 bg-red-950/50 hover:bg-red-900/70 text-red-300 font-bold cursor-pointer transition-colors">登出</button>
       </div>
     </header>
@@ -247,20 +248,20 @@
           <ul class="space-y-1 text-[#99f5b0]">
             <li><span class="text-amber-300 font-bold">bounty</span> / <span class="text-amber-300 font-bold">claim [code]</span> — 限時零日懸賞搶標</li>
             <li><span class="text-cyan-300 font-bold">whitehat</span> / <span class="text-cyan-300 font-bold">patch [ip]</span> — 白帽漏洞修補懸賞</li>
-            <li><span class="text-purple-400 font-bold">hackplayer [name]</span> — PvP 攻擊其他玩家</li>
-            <li><span class="text-pink-400 font-bold">drill</span> — 啟動高壓 Hex 反應特訓賺 BTC</li>
-            <li><span class="text-yellow-300 font-bold">chat [msg]</span> — 在大廳發送訊息</li>
-          </ul>
-        </div>
-      </aside>
+          <li><span class="text-purple-400 font-bold">pvp [賭金]</span> / <span class="text-purple-400 font-bold">joinpvp [id]</span> — 賭金 PvP 對決</li>
+          <li><span class="text-purple-400 font-bold">hackplayer [name]</span> — 突襲攻擊線上玩家 IP</li>
+          <li><span class="text-pink-400 font-bold">drill</span> — 啟動高壓 Hex 反應特訓賺 BTC</li>
+          <li><span class="text-yellow-300 font-bold">chat [msg]</span> — 在大廳發送訊息</li>
+      </ul>
     </div>
+  </aside>
+  </div>
   </div>
 
   <!-- =========================================================
        VIEW 2: WINDOWS 11 REMOTE DESKTOP INTERFACE
   ========================================================== -->
   <div id="rdp-view" class="hidden fixed inset-0 z-40 flex flex-col bg-black">
-    <!-- Top RDP Bar -->
     <div class="h-10 bg-gradient-to-r from-[#0f172a] via-[#1e3a8a] to-[#0f172a] border-b border-blue-400/40 px-3 sm:px-5 flex items-center justify-between text-white text-xs sm:text-sm shadow-lg z-50">
       <div class="flex items-center gap-2 sm:gap-3">
         <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse"></span>
@@ -280,17 +281,10 @@
       </div>
     </div>
 
-    <!-- Win11 Desktop Canvas -->
     <div id="win11-desktop" class="flex-1 win11-wallpaper relative select-none overflow-hidden" onclick="handleDesktopClick(event)">
-      <!-- Desktop Shortcut Icons Grid -->
-      <div id="win11-desktop-icons" class="p-4 grid grid-flow-col grid-rows-5 gap-3 w-fit relative z-10">
-      </div>
+      <div id="win11-desktop-icons" class="p-4 grid grid-flow-col grid-rows-5 gap-3 w-fit relative z-10"></div>
+      <div id="win11-windows-layer" class="absolute inset-0 pointer-events-none z-20"></div>
 
-      <!-- App Windows Layer -->
-      <div id="win11-windows-layer" class="absolute inset-0 pointer-events-none z-20">
-      </div>
-
-      <!-- Win11 Toast Notification -->
       <div id="win11-toast" class="hidden fixed bottom-16 right-4 z-50 win11-glass rounded-xl p-3.5 max-w-xs text-white shadow-2xl border border-cyan-400/40 transition-all">
         <div class="flex items-start gap-3">
           <div class="w-8 h-8 rounded-lg bg-cyan-500/20 border border-cyan-400/50 flex items-center justify-center text-cyan-300 font-bold shrink-0">✓</div>
@@ -301,7 +295,6 @@
         </div>
       </div>
 
-      <!-- Start Menu -->
       <div id="win11-start-menu" class="hidden absolute bottom-14 left-1/2 -translate-x-1/2 w-[92%] max-w-[460px] win11-glass rounded-2xl p-5 text-white shadow-2xl z-40">
         <div class="mb-4">
           <div class="bg-black/40 border border-white/15 rounded-full px-3.5 py-1.5 text-xs text-gray-300 flex items-center gap-2">
@@ -332,7 +325,6 @@
         </div>
       </div>
 
-      <!-- Taskbar -->
       <div class="absolute bottom-0 inset-x-0 h-12 win11-glass border-t border-white/15 px-4 flex items-center justify-between z-40">
         <div class="hidden sm:flex items-center gap-2 text-xs text-gray-300">
           <span>🌤️</span><span>22°C 晴</span>
@@ -357,8 +349,77 @@
           <span>🖥️</span><span>🔊</span>
           <div class="text-right leading-tight">
             <div id="win11-clock-time">20:00</div>
-            <div id="win11-clock-date" class="text-[10px] text-gray-400">2026/11/27</div>
+            <div id="win11-clock-date" class="text-[10px] text-gray-400">2026/11/28</div>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
+       PVP WAGER ARENA MODAL (CREATE / JOIN / DECLINE / IP DUEL)
+  ========================================================== -->
+  <div id="pvp-arena-modal" class="hidden fixed inset-0 z-50 bg-black/85 flex flex-col items-center justify-center p-4">
+    <div class="max-w-2xl w-full matrix-border rounded-lg p-5 bg-[#050d08] text-white space-y-4 max-h-[90vh] overflow-y-auto term-scroll">
+      <div class="flex items-center justify-between border-b border-purple-400/30 pb-2.5">
+        <div>
+          <h3 class="font-bold text-base sm:text-lg text-purple-300">⚔️ 暗網 PvP IP 對決與賭金擂台</h3>
+          <p class="text-[11px] text-gray-400">發起者可自訂 BTC 賭金；其他玩家可自由加入、略過，或於對戰中互攻對方虛擬 IP！</p>
+        </div>
+        <button onclick="closePvpArenaModal()" class="px-2.5 py-1 rounded bg-gray-800 hover:bg-gray-700 text-xs text-gray-200 cursor-pointer">關閉 ✕</button>
+      </div>
+
+      <!-- Active Duel Banner (when player is inside a PvP match) -->
+      <div id="pvp-active-match-box" class="hidden p-3.5 rounded-lg border border-amber-400/60 bg-amber-950/25 space-y-2">
+        <div class="flex flex-wrap items-center justify-between gap-2">
+          <span class="text-xs font-bold text-amber-300">🔥 進行中的 IP 攻防戰</span>
+          <span id="pvp-match-wager-badge" class="text-xs px-2 py-0.5 rounded bg-yellow-500/20 text-yellow-300 font-mono font-bold">彩池: 0 BTC</span>
+        </div>
+        <div id="pvp-match-detail" class="text-xs text-gray-200 space-y-1 font-mono"></div>
+        <div class="flex flex-wrap gap-2 pt-1">
+          <button onclick="pvpAttackOpponentIp()" class="px-3 py-1.5 rounded bg-red-600 hover:bg-red-500 text-white font-bold text-xs cursor-pointer">
+            💥 攻擊對方 IP (掃描+突破+爆破)
+          </button>
+          <button onclick="pvpFortifyMyIp()" class="px-3 py-1.5 rounded bg-cyan-700 hover:bg-cyan-600 text-white font-bold text-xs cursor-pointer">
+            🛡️ 強化自家 IP 防禦
+          </button>
+          <button onclick="pvpSurrenderMatch()" class="px-3 py-1.5 rounded bg-gray-800 hover:bg-gray-700 text-red-300 text-xs cursor-pointer">
+            🏳️ 認輸退出
+          </button>
+        </div>
+      </div>
+
+      <!-- Create PvP Room Section -->
+      <div class="p-3.5 rounded-lg border border-[#00ff41]/30 bg-black/50 space-y-2.5">
+        <div class="text-xs font-bold text-[#00ff41]">發起新的 PvP IP 挑戰 (設定賭金)</div>
+        <div class="flex flex-col sm:flex-row gap-2">
+          <div class="flex-1">
+            <label class="block text-[11px] text-gray-400 mb-1">我的對戰 IP (可自訂或自動產生)</label>
+            <input id="pvp-my-ip-input" type="text" placeholder="例如 10.66.12.8" class="w-full bg-black border border-[#00ff41]/40 rounded px-2.5 py-1.5 text-xs font-mono text-cyan-300 outline-none" />
+          </div>
+          <div class="w-full sm:w-40">
+            <label class="block text-[11px] text-gray-400 mb-1">設定賭金 (BTC)</label>
+            <input id="pvp-wager-input" type="number" min="10" step="10" value="50" class="w-full bg-black border border-yellow-400/50 rounded px-2.5 py-1.5 text-xs font-mono text-yellow-300 outline-none" />
+          </div>
+          <div class="flex items-end">
+            <button onclick="createPvpChallengeFromModal()" class="w-full sm:w-auto px-4 py-1.5 rounded bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs cursor-pointer">
+              發起挑戰
+            </button>
+          </div>
+        </div>
+        <div class="text-[11px] text-gray-400">
+          目前資產: <strong id="pvp-modal-btc" class="text-yellow-300">0.0000 BTC</strong>（發起或加入時將先鎖定賭金，勝者贏得雙方總彩池！）
+        </div>
+      </div>
+
+      <!-- Open PvP Challenges List -->
+      <div class="space-y-2">
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-bold text-cyan-300">開放中的 PvP 賭金戰帖 (真實線上玩家)</span>
+          <button onclick="renderPvpArenaList()" class="text-[11px] text-gray-400 hover:text-white cursor-pointer">↻ 重新整理</button>
+        </div>
+        <div id="pvp-challenges-list" class="space-y-2 text-xs">
+          <div class="text-gray-400 italic">目前沒有真實玩家發起的戰帖，你可以自己發起一場！</div>
         </div>
       </div>
     </div>
@@ -418,7 +479,7 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getAuth, signInAnonymously, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-    import { getFirestore, doc, setDoc, getDoc, onSnapshot, collection, addDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getFirestore, doc, setDoc, getDoc, onSnapshot, collection, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyDgYczLHRiBLM7AFfmCd_sUHdrgMPhK60M",
@@ -532,13 +593,62 @@
             }
           });
           if (window.updateOnlineCount) window.updateOnlineCount(count);
+          if (typeof window.renderPvpArenaList === "function") window.renderPvpArenaList();
         }, (err) => {
           console.error("Players error:", err);
           handleFirestoreError(err);
         });
 
+        onSnapshot(getPath("pvp_matches"), (snapshot) => {
+          const matches = [];
+          snapshot.forEach(d => {
+            matches.push({ id: d.id, ...d.data() });
+          });
+          matches.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+          window.cloudPvpMatches = matches;
+          if (typeof window.syncPvpMatchesWithCloud === "function") {
+            window.syncPvpMatchesWithCloud(matches);
+          }
+        }, (err) => {
+          console.warn("PvP matches listener fallback:", err);
+        });
+
         window.multiplayerActive = true;
       }
+
+      window.publishPvpMatchCloud = async (matchObj) => {
+        if (!window.multiplayerActive) return;
+        try {
+          await setDoc(getDocPath("pvp_matches", matchObj.id), matchObj, { merge: true });
+        } catch (err) {
+          console.warn("同步 PvP 戰帖失敗:", err);
+        }
+      };
+
+      window.updatePvpMatchCloud = async (matchId, patchObj) => {
+        if (!window.multiplayerActive || !matchId) return;
+        try {
+          await updateDoc(getDocPath("pvp_matches", matchId), patchObj);
+        } catch (err) {
+          console.warn("更新 PvP 戰局失敗:", err);
+        }
+      };
+
+      // 真實玩家 PvP 結算：勝者直接從 Firestore 原子累加贏得的 BTC 彩池
+      window.settlePvpWinnerCloud = async (winnerHandle, totalPot) => {
+        if (!window.multiplayerActive) return;
+        try {
+          const targetPlayer = Object.values(window.onlinePlayers || {}).find(p => p.handle === winnerHandle);
+          if (targetPlayer && targetPlayer.uid) {
+            const ref = getDocPath("players", targetPlayer.uid);
+            const snap = await getDoc(ref);
+            const curBtc = snap.exists() ? Number(snap.data().btc || 0) : 0;
+            await setDoc(ref, { btc: curBtc + totalPot, lastActive: Date.now() }, { merge: true });
+          }
+        } catch (err) {
+          console.warn("雲端結算 PvP 彩池失敗:", err);
+        }
+      };
 
       let errorShown = false;
       function handleFirestoreError(err) {
@@ -556,6 +666,7 @@
         try {
           await setDoc(getDocPath("players", window.myUid), {
             handle: window.myHandle,
+            ip: typeof window.getPlayerPvpIp === "function" ? window.getPlayerPvpIp() : "10.88.0.1",
             btc: typeof window.gameState !== "undefined" ? window.gameState.btc : 0,
             reputation: typeof window.gameState !== "undefined" ? window.gameState.reputation : 0,
             lastActive: Date.now()
@@ -976,43 +1087,48 @@
 
     // 依登入帳號切換對應存檔（優先比對雲端存檔進度，避免換帳號共用同一份快取）
     window.switchAccountSave = async (uid, defaultName = null) => {
-      stopTraceTimer();
-      activeRdpIp = null;
-      activeSshIp = null;
-      document.getElementById("rdp-view").classList.add("hidden");
-      document.getElementById("cli-view").classList.remove("hidden");
-      document.getElementById("prompt-label").textContent = "root@netrunner:~#";
+      try {
+        stopTraceTimer();
+        activeRdpIp = null;
+        activeSshIp = null;
+        document.getElementById("rdp-view")?.classList.add("hidden");
+        document.getElementById("cli-view")?.classList.remove("hidden");
+        const promptEl = document.getElementById("prompt-label");
+        if (promptEl) promptEl.textContent = "root@netrunner:~#";
 
-      const localAccState = loadState(uid);
-      const cloudAccState = typeof window.loadCloudSave === "function" ? await window.loadCloudSave(uid) : null;
+        const localAccState = loadState(uid);
+        const cloudAccState = typeof window.loadCloudSave === "function" ? await window.loadCloudSave(uid) : null;
 
-      let chosen = { ...DEFAULT_STATE, ...localAccState };
-      if (cloudAccState) {
-        const localScore = (chosen.reputation || 0) + (chosen.btc || 0) + ((chosen.completedMissions || []).length * 100);
-        const cloudScore = (cloudAccState.reputation || 0) + (cloudAccState.btc || 0) + ((cloudAccState.completedMissions || []).length * 100);
-        if (cloudScore >= localScore) {
-          chosen = { ...DEFAULT_STATE, ...cloudAccState };
+        let chosen = { ...DEFAULT_STATE, ...localAccState };
+        if (cloudAccState) {
+          const localScore = (chosen.reputation || 0) + (chosen.btc || 0) + ((chosen.completedMissions || []).length * 100);
+          const cloudScore = (cloudAccState.reputation || 0) + (cloudAccState.btc || 0) + ((cloudAccState.completedMissions || []).length * 100);
+          if (cloudScore >= localScore) {
+            chosen = { ...DEFAULT_STATE, ...cloudAccState };
+          }
         }
+
+        if (!chosen.handle) {
+          chosen.handle = defaultName ? defaultName.substring(0, 12) : "Anon_" + Math.floor(Math.random() * 9999);
+        }
+
+        gameState = chosen;
+        window.gameState = gameState;
+        localStorage.setItem(getStorageKeyForUid(uid), JSON.stringify(gameState));
+
+        if (!terminalBooted) {
+          terminalBooted = true;
+          bootTerminal();
+        } else if (termOutput) {
+          termOutput.innerHTML = "";
+          bootTerminal();
+        }
+
+        if (window.setMyHandle) window.setMyHandle(gameState.handle);
+        else window.myHandle = gameState.handle;
+      } catch (err) {
+        console.warn("switchAccountSave 發生非致命錯誤:", err);
       }
-
-      if (!chosen.handle) {
-        chosen.handle = defaultName ? defaultName.substring(0, 12) : "Anon_" + Math.floor(Math.random() * 9999);
-      }
-
-      gameState = chosen;
-      window.gameState = gameState;
-      localStorage.setItem(getStorageKeyForUid(uid), JSON.stringify(gameState));
-
-      if (!terminalBooted) {
-        terminalBooted = true;
-        bootTerminal();
-      } else {
-        termOutput.innerHTML = "";
-        bootTerminal();
-      }
-
-      if (window.setMyHandle) window.setMyHandle(gameState.handle);
-      else window.myHandle = gameState.handle;
     };
 
     function getReputationRank(rep) {
@@ -1138,7 +1254,7 @@
     const AVAILABLE_COMMANDS = [
       "help", "missions", "accept", "scan", "nmap", "analyze", "bypass",
       "crack", "rdp", "ssh", "decode", "shop", "buy", "proxy", "clear", "sound", "reset",
-      "chat", "whitehat", "patch", "hackplayer", "setname", "bounty", "claim", "drill", "logout"
+      "chat", "whitehat", "patch", "hackplayer", "setname", "bounty", "claim", "drill", "pvp", "joinpvp", "logout"
     ];
 
     termInput.addEventListener("keydown", (e) => {
@@ -1207,6 +1323,8 @@
           printLine("  bounty                - 查看或立即釋出限時零日懸賞");
           printLine("  claim [answer|hex]    - 搶標當前零日懸賞");
           printLine("  drill                 - 啟動 14 秒高壓 Hex 反應特訓賺 BTC");
+          printLine("  pvp [賭金]            - 發起賭金 PvP 對決 (或開啟 PvP 擂台)");
+          printLine("  joinpvp [編號]        - 加入指定賭金 PvP 戰帖");
           printLine("  chat [msg]            - 傳送訊息到全球線上大廳 (IRC)");
           printLine("  setname [name]        - 更改你在線上大廳的駭客代號");
           printLine("  whitehat              - 接取企業隨機漏洞修補懸賞");
@@ -1218,6 +1336,30 @@
           printLine("  clear / sound / reset - 系統設定");
           printLine("  logout                - 登出帳號並返回 login.html\n");
           break;
+
+        case "pvp": {
+          const wagerNum = arg1 ? parseFloat(arg1) : NaN;
+          if (!arg1) {
+            openPvpArenaModal();
+            return;
+          }
+          if (isNaN(wagerNum) || wagerNum < 10) {
+            sfx.error();
+            printLine("[用法] pvp [賭金BTC]（最低 10 BTC，例如: pvp 50）或直接輸入 pvp 開啟擂台。", "text-red-400");
+            return;
+          }
+          createPvpChallenge(wagerNum);
+          break;
+        }
+
+        case "joinpvp": {
+          if (!arg1) {
+            openPvpArenaModal();
+            return;
+          }
+          joinPvpChallenge(arg1.trim());
+          break;
+        }
 
         case "bounty":
           spawnBountyEvent(true);
@@ -1505,41 +1647,46 @@
           printLine(`\n[🛡️ 漏洞修補成功] 已成功為 ${arg1} 佈署安全 Patch，防禦升級完畢！`, "text-cyan-400 font-bold");
           printLine(`企業匯款完成，獲得白帽賞金: +150 BTC\n`, "text-yellow-300 font-bold matrix-glow");
           if (window.sendChatToCloud) {
-            window.sendChatToCloud(`【工會廣播】我剛剛成功修補了一個企業的 0-day 漏洞，獲得 150 BTC！`);
-          }
-          break;
+          window.sendChatToCloud(`【工會廣播】我剛剛成功修補了一個企業的 0-day 漏洞，獲得 150 BTC！`);
+        }
+        break;
 
-        case "hackplayer":
-          if (!arg1) { sfx.error(); printLine("[用法] hackplayer [玩家名稱]", "text-red-400"); return; }
-          sfx.beep();
-          printLine(`\n正在對線上玩家 [${arg1}] 發起強制入侵攻擊...`, "text-purple-400 font-bold");
+      case "hackplayer":
+        if (!arg1) { sfx.error(); printLine("[用法] hackplayer [玩家名稱]", "text-red-400"); return; }
+        sfx.beep();
+        printLine(`\n正在對線上玩家 [${arg1}] 發起強制入侵攻擊...`, "text-purple-400 font-bold");
 
-          if (!window.attackPlayerCloud) {
-            printLine(`[錯誤] 離線模式，無法進行 PvP 攻擊。`, "text-red-400"); return;
-          }
+        if (!window.attackPlayerCloud) {
+          printLine(`[錯誤] 離線模式，無法進行 PvP 攻擊。`, "text-red-400");
+          return;
+        }
 
-          window.attackPlayerCloud(arg1).then(result => {
-            if (result.success) {
-              gameState.btc += result.loot; saveState(); updateBtcDisplay(); sfx.success();
-              printLine(`[💀 PvP 入侵成功] 成功突破 ${arg1} 的防禦牆！竊取了 ${result.loot} BTC！\n`, "text-emerald-300 font-bold");
-              adjustReputation(30, `PvP 擊破 ${arg1}`);
-              if (window.updatePresence) window.updatePresence();
+        window.attackPlayerCloud(arg1).then(result => {
+          if (result.success) {
+            gameState.btc += result.loot;
+            saveState();
+            updateBtcDisplay();
+            sfx.success();
+            printLine(`[💀 PvP 入侵成功] 成功突破 ${arg1} 的防禦牆！竊取了 ${result.loot} BTC！\n`, "text-emerald-300 font-bold");
+            if (window.updatePresence) window.updatePresence();
+          } else {
+            if (result.reason === "NotFound") {
+              sfx.error();
+              printLine(`[PvP 錯誤] 線上大廳找不到真實玩家 [${arg1}]（對方可能已離線或尚未上線）。`, "text-red-400");
+            } else if (result.reason === "Self") {
+              sfx.error();
+              printLine(`[錯誤] 你無法對自己發動駭客攻擊！`, "text-red-400");
             } else {
-              if (result.reason === "NotFound") {
-                sfx.error(); printLine(`[錯誤] 找不到玩家 ${arg1}，請確認大廳中顯示的在線代號。`, "text-gray-400");
-              } else if (result.reason === "Self") {
-                sfx.error(); printLine(`[錯誤] 你無法對自己發動駭客攻擊！`, "text-red-400");
-              } else {
-                sfx.error();
-                printLine(`[❌ PvP 入侵失敗] ${arg1} 的主動防禦反彈了你的攻擊，警方反向追蹤已觸發！\n`, "text-red-500 font-bold");
-                adjustReputation(-20, `PvP 遭 ${arg1} 反彈`, true);
-                startTraceTimer(15);
-              }
+              sfx.error();
+              printLine(`[❌ PvP 入侵失敗] ${arg1} 的主動防禦反彈了你的攻擊，警方反向追蹤已觸發！\n`, "text-red-500 font-bold");
+              adjustReputation(-20, `PvP 遭 ${arg1} 反彈`, true);
+              startTraceTimer(15);
             }
-          });
-          break;
+          }
+        });
+        break;
 
-        case "shop":
+      case "shop":
           sfx.beep();
           printLine("\n=== 暗網軍火商店 (DARKNET MARKET) ===", "text-[#00ff41] font-bold");
           printLine(`當前可用資產: ${gameState.btc.toFixed(4)} BTC\n`, "text-yellow-400 font-bold");
@@ -1679,6 +1826,382 @@
         window.location.href = "login.html";
       }
     }
+
+    /* =========================================================================
+       4B. PVP WAGER ROOMS & IP DUEL ENGINE (REAL PLAYERS ONLY)
+    ========================================================================= */
+    let localPvpMatches = [];
+    let activePvpMatchId = null;
+
+    function getPlayerPvpIp() {
+      if (!gameState.pvpIp) {
+        const b2 = Math.floor(Math.random() * 200) + 10;
+        const b3 = Math.floor(Math.random() * 240) + 1;
+        const b4 = Math.floor(Math.random() * 240) + 1;
+        gameState.pvpIp = `10.${b2}.${b3}.${b4}`;
+        saveState();
+      }
+      return gameState.pvpIp;
+    }
+    window.getPlayerPvpIp = getPlayerPvpIp;
+
+    function ensureRealMultiplayerReady() {
+      if (!window.multiplayerActive) {
+        sfx.error();
+        printLine("[PvP 錯誤] 目前尚未連線至真實多人伺服器，請確認 Firebase 連線狀態。", "text-red-400");
+        return false;
+      }
+      return true;
+    }
+
+    window.syncPvpMatchesWithCloud = function(cloudMatches) {
+      const myHandle = gameState.handle || window.myHandle;
+      const validCloud = (cloudMatches || []).filter(m => m && m.id && m.hostHandle);
+      localPvpMatches = validCloud.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+      // 若有其他真實玩家加入我發起的戰帖並設為 active，自動同步進入對戰
+      const joinedMine = localPvpMatches.find(
+        m => m.status === "active" && m.hostHandle === myHandle && !activePvpMatchId
+      );
+      if (joinedMine) {
+        activePvpMatchId = joinedMine.id;
+        printLine(`\n[🔥 對戰配對成功] 真實玩家 ${joinedMine.challengerHandle} (IP: ${joinedMine.challengerIp}) 已加入你的賭局 ${joinedMine.id}！`, "text-amber-300 font-bold");
+      }
+
+      renderPvpArenaList();
+    };
+
+    function openPvpArenaModal() {
+      const modal = document.getElementById("pvp-arena-modal");
+      if (!modal) return;
+      const btcEl = document.getElementById("pvp-modal-btc");
+      if (btcEl) btcEl.textContent = `${gameState.btc.toFixed(4)} BTC`;
+      const ipInput = document.getElementById("pvp-my-ip-input");
+      if (ipInput && !ipInput.value) {
+        ipInput.value = getPlayerPvpIp();
+      }
+      modal.classList.remove("hidden");
+      renderPvpArenaList();
+      if (typeof sfx !== "undefined") sfx.beep();
+    }
+    window.openPvpArenaModal = openPvpArenaModal;
+
+    function closePvpArenaModal() {
+      const modal = document.getElementById("pvp-arena-modal");
+      if (modal) modal.classList.add("hidden");
+      focusTerminalInput();
+    }
+    window.closePvpArenaModal = closePvpArenaModal;
+
+    function createPvpChallengeFromModal() {
+      const wagerVal = parseFloat(document.getElementById("pvp-wager-input").value);
+      const customIp = (document.getElementById("pvp-my-ip-input").value || "").trim();
+      const ipRegex = /^(\d{1,3}\.){3}\d{1,3}$/;
+      if (customIp && ipRegex.test(customIp)) {
+        gameState.pvpIp = customIp;
+        saveState();
+      }
+      createPvpChallenge(wagerVal);
+    }
+    window.createPvpChallengeFromModal = createPvpChallengeFromModal;
+
+    async function createPvpChallenge(wager) {
+      if (!ensureRealMultiplayerReady()) return;
+      if (isNaN(wager) || wager < 10) {
+        sfx.error();
+        printLine("[PvP 錯誤] 賭金必須為至少 10 BTC 的有效數字。", "text-red-400");
+        return;
+      }
+      if (gameState.btc < wager) {
+        sfx.error();
+        printLine(`[PvP 資金不足] 你目前只有 ${gameState.btc.toFixed(4)} BTC，無法支付 ${wager} BTC 賭金！`, "text-red-400");
+        return;
+      }
+
+      gameState.btc -= wager;
+      saveState();
+      updateBtcDisplay();
+      if (window.updatePresence) await window.updatePresence();
+
+      const myIp = getPlayerPvpIp();
+      const matchId = `PVP-${Math.floor(1000 + Math.random() * 9000)}`;
+      const newMatch = {
+        id: matchId,
+        hostUid: window.myUid || null,
+        hostHandle: gameState.handle || window.myHandle || "Anon_Hacker",
+        hostIp: myIp,
+        hostHp: 100,
+        wager: wager,
+        challengerUid: null,
+        challengerHandle: null,
+        challengerIp: null,
+        challengerHp: 100,
+        status: "open",
+        createdAt: Date.now()
+      };
+
+      localPvpMatches.unshift(newMatch);
+      activePvpMatchId = matchId;
+      sfx.success();
+
+      printLine(`\n[⚔️ 真實 PvP 戰帖已發布] 編號: ${matchId} | 你的 IP: ${myIp} | 賭金: ${wager} BTC（總彩池 ${wager * 2} BTC）`, "text-purple-300 font-bold");
+      printLine(`等待其他真實玩家輸入 'joinpvp ${matchId}' 應戰（其他玩家也可選擇略過不加入）。`, "text-cyan-300");
+
+      if (window.publishPvpMatchCloud) {
+        await window.publishPvpMatchCloud(newMatch);
+      }
+      if (window.sendChatToCloud) {
+        await window.sendChatToCloud(`【⚔️ PvP 賭局 ${matchId}】${newMatch.hostHandle} (IP: ${myIp}) 下注 ${wager} BTC 開局！輸入 joinpvp ${matchId} 應戰（也可自由選擇不要加入）`);
+      }
+
+      renderPvpArenaList();
+    }
+
+    async function joinPvpChallenge(matchId) {
+      if (!ensureRealMultiplayerReady()) return;
+      const match = localPvpMatches.find(m => m.id === matchId);
+      const myHandle = gameState.handle || window.myHandle;
+
+      if (!match) {
+        sfx.error();
+        printLine(`[PvP 錯誤] 找不到戰帖編號 ${matchId}。`, "text-red-400");
+        return;
+      }
+      if (match.status !== "open") {
+        sfx.error();
+        printLine(`[PvP 提示] 戰帖 ${matchId} 已開戰或已結束。`, "text-yellow-300");
+        return;
+      }
+      if (match.hostHandle === myHandle || (window.myUid && match.hostUid === window.myUid)) {
+        sfx.error();
+        printLine(`[PvP 提示] 你不能加入自己發起的戰帖，請等待其他真實玩家應戰。`, "text-yellow-300");
+        return;
+      }
+      if (gameState.btc < match.wager) {
+        sfx.error();
+        printLine(`[PvP 資金不足] 加入此戰帖需要 ${match.wager} BTC 賭金！`, "text-red-400");
+        return;
+      }
+
+      gameState.btc -= match.wager;
+      saveState();
+      updateBtcDisplay();
+      if (window.updatePresence) await window.updatePresence();
+
+      const myIp = getPlayerPvpIp();
+      match.challengerUid = window.myUid || null;
+      match.challengerHandle = myHandle;
+      match.challengerIp = myIp;
+      match.status = "active";
+      activePvpMatchId = match.id;
+
+      sfx.success();
+      printLine(`\n[🔥 加入真實 PvP 賭局 ${match.id}] 總彩池 ${match.wager * 2} BTC！`, "text-amber-300 font-bold");
+      printLine(`對手: ${match.hostHandle} (目標 IP: ${match.hostIp}) | 你的 IP: ${myIp}`, "text-cyan-300");
+
+      if (window.updatePvpMatchCloud) {
+        await window.updatePvpMatchCloud(match.id, {
+          challengerUid: match.challengerUid,
+          challengerHandle: match.challengerHandle,
+          challengerIp: match.challengerIp,
+          status: "active"
+        });
+      }
+      if (window.sendChatToCloud) {
+        await window.sendChatToCloud(`【🔥 PvP 開戰 ${match.id}】${match.challengerHandle} (IP: ${myIp}) 接受 ${match.hostHandle} (IP: ${match.hostIp}) 的 ${match.wager} BTC 賭局！`);
+      }
+
+      openPvpArenaModal();
+    }
+
+    function declinePvpChallenge(matchId) {
+      const match = localPvpMatches.find(m => m.id === matchId);
+      if (!match) return;
+      match.declinedByMe = true;
+      sfx.beep();
+      printLine(`[PvP] 已選擇不加入戰帖 ${matchId}（${match.hostHandle} / ${match.wager} BTC）。`, "text-gray-400");
+      renderPvpArenaList();
+    }
+
+    async function pvpAttackOpponentIp() {
+      const match = localPvpMatches.find(m => m.id === activePvpMatchId);
+      if (!match || match.status !== "active") {
+        sfx.error();
+        return;
+      }
+
+      const myHandle = gameState.handle || window.myHandle;
+      const isHost = match.hostHandle === myHandle;
+      const targetIp = isHost ? match.challengerIp : match.hostIp;
+      const targetName = isHost ? match.challengerHandle : match.hostHandle;
+
+      const proxyBonus = gameState.isProxyEnabled ? 12 : 0;
+      const crackerBonus = gameState.inventory.includes("quantum_cracker") ? 15 : 0;
+      const dmg = Math.min(65, Math.floor(Math.random() * 26) + 22 + Math.floor((proxyBonus + crackerBonus) / 3));
+
+      if (isHost) {
+        match.challengerHp = Math.max(0, (match.challengerHp || 100) - dmg);
+      } else {
+        match.hostHp = Math.max(0, (match.hostHp || 100) - dmg);
+      }
+
+      sfx.beep();
+      printLine(`[💥 IP 攻擊] 你向真實玩家 ${targetName} 的 IP [${targetIp}] 發動端口滲透，造成 ${dmg} 點防禦損傷！`, "text-red-400 font-bold");
+
+      const opponentHp = isHost ? match.challengerHp : match.hostHp;
+      if (opponentHp <= 0) {
+        await finishPvpMatch(match, true, `成功攻陷 ${targetName} 的 IP [${targetIp}]`);
+        return;
+      }
+
+      if (window.updatePvpMatchCloud) {
+        await window.updatePvpMatchCloud(match.id, {
+          hostHp: match.hostHp,
+          challengerHp: match.challengerHp,
+          lastActionBy: myHandle,
+          lastActionAt: Date.now()
+        });
+      }
+      renderPvpArenaList();
+    }
+
+    async function pvpFortifyMyIp() {
+      const match = localPvpMatches.find(m => m.id === activePvpMatchId);
+      if (!match || match.status !== "active") return;
+      const myHandle = gameState.handle || window.myHandle;
+      const isHost = match.hostHandle === myHandle;
+      const heal = Math.floor(Math.random() * 14) + 10;
+      if (isHost) {
+        match.hostHp = Math.min(100, (match.hostHp || 100) + heal);
+      } else {
+        match.challengerHp = Math.min(100, (match.challengerHp || 100) + heal);
+      }
+      sfx.success();
+      printLine(`[🛡️ 防禦強化] 你為 IP [${getPlayerPvpIp()}] 部署防火牆規則，節點完整度恢復 +${heal}%！`, "text-cyan-300");
+      if (window.updatePvpMatchCloud) {
+        await window.updatePvpMatchCloud(match.id, {
+          hostHp: match.hostHp,
+          challengerHp: match.challengerHp
+        });
+      }
+      renderPvpArenaList();
+    }
+
+    async function pvpSurrenderMatch() {
+      const match = localPvpMatches.find(m => m.id === activePvpMatchId);
+      if (!match || match.status !== "active") {
+        activePvpMatchId = null;
+        renderPvpArenaList();
+        return;
+      }
+      await finishPvpMatch(match, false, "主動退出並放棄賭金");
+    }
+
+    async function finishPvpMatch(match, playerWon, reasonText) {
+      const myHandle = gameState.handle || window.myHandle;
+      const isHost = match.hostHandle === myHandle;
+      const winnerHandle = playerWon ? myHandle : (isHost ? match.challengerHandle : match.hostHandle);
+
+      match.status = "finished";
+      match.winnerHandle = winnerHandle;
+      activePvpMatchId = null;
+      const totalPot = match.wager * 2;
+
+      if (playerWon) {
+        gameState.btc += totalPot;
+        saveState();
+        updateBtcDisplay();
+        adjustReputation(45, `贏得真實 PvP 賭局 ${match.id} (${totalPot} BTC)`);
+        sfx.success();
+        printLine(`\n[🏆 PvP 勝利！] ${reasonText}！贏得總彩池 +${totalPot} BTC！\n`, "text-yellow-300 font-bold matrix-glow");
+        if (window.sendChatToCloud) {
+          await window.sendChatToCloud(`【🏆 PvP 戰報】${myHandle} 在 ${match.id} 中擊潰 ${isHost ? match.challengerHandle : match.hostHandle}，贏走 ${totalPot} BTC 賭金！`);
+        }
+      } else {
+        adjustReputation(-20, `PvP 賭局 ${match.id} 失利`, true);
+        sfx.error();
+        printLine(`\n[❌ PvP 落敗] ${reasonText}，對手 ${winnerHandle} 贏走 ${totalPot} BTC 彩池。\n`, "text-red-400 font-bold");
+        if (winnerHandle && window.settlePvpWinnerCloud) {
+          await window.settlePvpWinnerCloud(winnerHandle, totalPot);
+        }
+      }
+
+      if (window.updatePresence) await window.updatePresence();
+      if (window.updatePvpMatchCloud) {
+        await window.updatePvpMatchCloud(match.id, {
+          status: "finished",
+          winnerHandle: winnerHandle,
+          hostHp: match.hostHp,
+          challengerHp: match.challengerHp
+        });
+      }
+      renderPvpArenaList();
+    }
+
+    function renderPvpArenaList() {
+      const listEl = document.getElementById("pvp-challenges-list");
+      const activeBox = document.getElementById("pvp-active-match-box");
+      const btcLabel = document.getElementById("pvp-modal-btc");
+      if (!listEl || !activeBox) return;
+
+      if (btcLabel) btcLabel.textContent = `${gameState.btc.toFixed(4)} BTC`;
+
+      const myHandle = gameState.handle || window.myHandle;
+      const currentMatch = localPvpMatches.find(m => m.id === activePvpMatchId && m.status === "active");
+
+      // 若對方已把我的血量打到 0 並結束戰局，同步觸發落敗結算
+      const finishedAgainstMe = localPvpMatches.find(
+        m => m.id === activePvpMatchId && m.status === "finished" && m.winnerHandle && m.winnerHandle !== myHandle
+      );
+      if (finishedAgainstMe) {
+        activePvpMatchId = null;
+        adjustReputation(-20, `PvP 賭局 ${finishedAgainstMe.id} 遭 ${finishedAgainstMe.winnerHandle} 攻破`, true);
+        printLine(`\n[❌ PvP 落敗] 你的 IP 節點遭 ${finishedAgainstMe.winnerHandle} 攻破，彩池 ${finishedAgainstMe.wager * 2} BTC 由對方贏得。\n`, "text-red-400 font-bold");
+      }
+
+      if (currentMatch) {
+        const isHost = currentMatch.hostHandle === myHandle;
+        const myHp = isHost ? currentMatch.hostHp : currentMatch.challengerHp;
+        const oppHp = isHost ? currentMatch.challengerHp : currentMatch.hostHp;
+        const oppHandle = isHost ? currentMatch.challengerHandle : currentMatch.hostHandle;
+        const oppIp = isHost ? currentMatch.challengerIp : currentMatch.hostIp;
+
+        activeBox.classList.remove("hidden");
+        document.getElementById("pvp-match-wager-badge").textContent = `總彩池: ${currentMatch.wager * 2} BTC`;
+        document.getElementById("pvp-match-detail").innerHTML = `
+          <div>你的節點 [${getPlayerPvpIp()}] 完整度: <strong class="text-emerald-400">${myHp}%</strong></div>
+          <div>對手 ${oppHandle} 節點 [${oppIp}] 完整度: <strong class="text-red-400">${oppHp}%</strong></div>
+        `;
+      } else {
+        activeBox.classList.add("hidden");
+      }
+
+      const openMatches = localPvpMatches.filter(m => m.status === "open" && !m.declinedByMe);
+      if (openMatches.length === 0) {
+        listEl.innerHTML = `<div class="text-gray-400 italic p-3 rounded border border-white/10 bg-black/30">目前沒有其他真實玩家發起的開放戰帖，可在上方輸入賭金發起新對局。</div>`;
+        return;
+      }
+
+      listEl.innerHTML = openMatches.map(m => {
+        const isMine = m.hostHandle === myHandle || (window.myUid && m.hostUid === window.myUid);
+        return `
+          <div class="p-3 rounded-lg border border-purple-400/30 bg-black/50 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div class="space-y-0.5">
+              <div class="font-bold text-purple-200 font-mono">[${m.id}] 發起者: <span class="text-cyan-300">${m.hostHandle}</span> <span class="text-gray-400">(IP: ${m.hostIp})</span></div>
+              <div class="text-[11px] text-yellow-300">賭金: <strong>${m.wager} BTC</strong>（勝者贏得 ${m.wager * 2} BTC）</div>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              ${isMine
+                ? `<span class="text-[11px] text-amber-300 px-2 py-1 rounded bg-amber-950/50 border border-amber-500/30">等待其他玩家應戰...</span>`
+                : `<button onclick="joinPvpChallenge('${m.id}')" class="px-3 py-1.5 rounded bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs cursor-pointer">加入對戰</button>
+                   <button onclick="declinePvpChallenge('${m.id}')" class="px-2.5 py-1.5 rounded bg-gray-800 hover:bg-gray-700 text-gray-300 text-xs cursor-pointer">不要加入</button>`
+              }
+            </div>
+          </div>
+        `;
+      }).join("");
+    }
+    window.renderPvpArenaList = renderPvpArenaList;
 
     /* =========================================================================
        5. FIREWALL HEX BYPASS & DRILL MINI-GAME ENGINE
@@ -1884,343 +2407,99 @@
       const cliTag = document.getElementById("trace-state-tag");
       const rdpTimer = document.getElementById("rdp-trace-timer");
 
-      cliTimer.textContent = text;
-      rdpTimer.textContent = isDanger ? text : "無追蹤";
+      if (cliTimer) cliTimer.textContent = text;
+      if (rdpTimer) rdpTimer.textContent = isDanger ? text : "無追蹤";
 
-      if (isDanger) {
-        cliTimer.className = "text-3xl font-bold tracking-widest text-center py-1 text-red-500 animate-pulse";
-        cliTag.textContent = "警告：反向追蹤中！";
-        cliTag.className = "px-1.5 py-0.5 rounded bg-red-900 text-red-200 font-bold";
-      } else {
-        cliTimer.className = "text-3xl font-bold tracking-widest text-center py-1 text-[#00ff41]";
-        cliTag.textContent = "系統安全";
-        cliTag.className = "px-1.5 py-0.5 rounded bg-[#003300] text-[#00ff41]";
+      if (cliTimer && cliTag) {
+        if (isDanger) {
+          cliTimer.className = "text-3xl font-bold tracking-widest text-center py-1 text-red-500 animate-pulse";
+          cliTag.textContent = "警告：反向追蹤中！";
+          cliTag.className = "px-1.5 py-0.5 rounded bg-red-900 text-red-200 font-bold";
+        } else {
+          cliTimer.className = "text-3xl font-bold tracking-widest text-center py-1 text-[#00ff41]";
+          cliTag.textContent = "系統安全";
+          cliTag.className = "px-1.5 py-0.5 rounded bg-[#003300] text-[#00ff41]";
+        }
       }
     }
 
+    // 處理反向追蹤歸零時的強制斷線與重連提示
     function handleTraceCaught() {
       sfx.error();
       if (activeRdpIp) disconnectRDP(true);
-      adjustReputation(-25, "遭反向追蹤鎖定", true);
+      adjustReputation(-25, "遭防禦火牆反向追蹤鎖定", true);
       printLine("\n[嚴重警報 ⚠] 反向追蹤歸零！防禦火牆強制斷開連線！", "text-red-500 font-bold");
-      printLine("[系統] 已自動切換 IP，請再次輸入 'rdp [ip]' 重新潛入！\n", "text-yellow-300");
+      printLine("[系統] 連線已中斷，請再次輸入 'rdp [ip]' 重新潛入！\n", "text-yellow-300");
     }
 
+    // 更新右側跳板狀態、當前任務進度與已偵測主機清單
     function updateRightSidebar() {
       const mContent = document.getElementById("mission-panel-content");
       const mBadge = document.getElementById("mission-badge");
       const hostsList = document.getElementById("hosts-list");
-
-      document.getElementById("proxy-level-label").textContent = gameState.isProxyEnabled ? `v${gameState.activeProxyLevel}` : "未啟用";
-      document.getElementById("trace-speed-label").textContent = gameState.isProxyEnabled ? (gameState.activeProxyLevel === 3 ? "0.3x (極慢)" : "0.6x (慢)") : "1.0x (標準)";
-
+      const proxyLevelEl = document.getElementById("proxy-level-label");
+      const traceSpeedEl = document.getElementById("trace-speed-label");
       const pBadge = document.getElementById("proxy-badge");
-      pBadge.textContent = gameState.isProxyEnabled ? `PROXY: v${gameState.activeProxyLevel} (啟用)` : "PROXY: 未關聯";
-      pBadge.className = gameState.isProxyEnabled ? "px-2 py-0.5 rounded border border-emerald-400 text-emerald-300 font-bold" : "px-2 py-0.5 rounded border border-gray-600 text-gray-400";
 
-      if (gameState.activeMissionId && MISSIONS[gameState.activeMissionId]) {
-        const m = MISSIONS[gameState.activeMissionId];
-        const isDone = gameState.completedMissions.includes(m.id);
-        mBadge.textContent = isDone ? "已完成 ✓" : `任務 #${m.id}`;
-        mBadge.className = isDone ? "text-[11px] px-2 py-0.5 rounded bg-emerald-500/30 text-emerald-300 font-bold" : "text-[11px] px-2 py-0.5 rounded bg-yellow-500/25 text-yellow-300 font-bold";
-
-        mContent.innerHTML = `
-          <div class="font-bold text-[#00ff41]">${m.title}</div>
-          <div class="text-[11px] text-[#00aa2b]">報酬: <span class="text-yellow-300 font-bold">${m.reward} BTC</span></div>
-          <div class="p-2 rounded bg-black/60 border border-[#00ff41]/25 text-[11px] whitespace-pre-line text-[#b8ffca]">${m.hint}</div>
-        `;
+      if (proxyLevelEl) {
+        proxyLevelEl.textContent = gameState.isProxyEnabled ? `v${gameState.activeProxyLevel}` : "未啟用";
+      }
+      if (traceSpeedEl) {
+        traceSpeedEl.textContent = gameState.isProxyEnabled
+          ? (gameState.activeProxyLevel === 3 ? "0.3x (極慢)" : "0.6x (慢)")
+          : "1.0x (標準)";
       }
 
-      if (gameState.discoveredHosts.length === 0) {
-        hostsList.innerHTML = `<div class="italic">尚未執行 scan</div>`;
-      } else {
-        hostsList.innerHTML = gameState.discoveredHosts.map(ip => {
-          const cracked = !!gameState.crackedHosts[ip];
-          const isWhiteHat = (ip === gameState.whiteHatTarget);
-          return `
-            <div class="flex items-center justify-between bg-black/50 px-2 py-1 rounded border border-[#00ff41]/20">
-              <span class="text-white font-mono flex items-center gap-1">${ip} ${isWhiteHat ? '<span class="text-cyan-400" title="白帽懸賞目標">🛡️</span>' : ''}</span>
-              <span class="${cracked ? "text-emerald-400 font-bold" : "text-yellow-400"}">
-                ${cracked ? "已解鎖 ✓" : "未解鎖"}
-              </span>
-            </div>
+      if (pBadge) {
+        pBadge.textContent = gameState.isProxyEnabled
+          ? `PROXY: v${gameState.activeProxyLevel} (啟用)`
+          : "PROXY: 未關聯";
+        pBadge.className = gameState.isProxyEnabled
+          ? "px-2 py-0.5 rounded border border-emerald-400 text-emerald-300 font-bold"
+          : "px-2 py-0.5 rounded border border-gray-600 text-gray-400";
+      }
+
+      if (mContent && mBadge) {
+        if (gameState.activeMissionId && MISSIONS[gameState.activeMissionId]) {
+          const m = MISSIONS[gameState.activeMissionId];
+          const isDone = (gameState.completedMissions || []).includes(m.id);
+          mBadge.textContent = isDone ? "已完成 ✓" : `任務 #${m.id}`;
+          mBadge.className = isDone
+            ? "text-[11px] px-2 py-0.5 rounded bg-emerald-500/30 text-emerald-300 font-bold"
+            : "text-[11px] px-2 py-0.5 rounded bg-yellow-500/25 text-yellow-300 font-bold";
+
+          mContent.innerHTML = `
+            <div class="font-bold text-[#00ff41]">${m.title}</div>
+            <div class="text-[11px] text-[#00aa2b]">報酬: <span class="text-yellow-300 font-bold">${m.reward} BTC</span></div>
+            <div class="p-2 rounded bg-black/60 border border-[#00ff41]/25 text-[11px] whitespace-pre-line text-[#b8ffca]">${m.hint}</div>
           `;
-        }).join("");
-      }
-    }
-
-    /* =========================================================================
-       8. WINDOWS 11 SIMULATION ENGINE
-    ========================================================================= */
-    function connectToRDP(ip) {
-      const victim = VICTIM_SYSTEMS[ip];
-      if (!victim) return;
-
-      if (ip === gameState.whiteHatTarget) {
-        sfx.error();
-        printLine(`[提示] 此伺服器為單純漏洞修補懸賞目標，無須 RDP 登入桌面。請直接輸入 'patch ${ip}'。`, "text-cyan-300 font-bold");
-        return;
-      }
-
-      activeRdpIp = ip; sfx.beep();
-
-      const trans = document.getElementById("rdp-transition");
-      const transBar = document.getElementById("transition-bar");
-      const transLog = document.getElementById("transition-log");
-      trans.classList.remove("hidden"); trans.classList.add("glitch-active");
-      transBar.style.width = "20%";
-      transLog.innerHTML = `<div>&gt; Connecting to ${ip}:3389...</div>`;
-
-      setTimeout(() => {
-        transBar.style.width = "70%";
-        transLog.innerHTML += `<div>&gt; Authenticating User: ${victim.username}... OK</div>`;
-      }, 300);
-
-      setTimeout(() => {
-        transBar.style.width = "100%";
-        trans.classList.add("hidden"); trans.classList.remove("glitch-active");
-        launchWin11Desktop(victim);
-      }, 700);
-    }
-
-    function launchWin11Desktop(victim) {
-      document.getElementById("cli-view").classList.add("hidden");
-      document.getElementById("rdp-view").classList.remove("hidden");
-      document.getElementById("rdp-target-ip-badge").textContent = `${victim.ip} (${victim.hostname})`;
-      document.getElementById("rdp-target-user-badge").textContent = `User: ${victim.username}`;
-      document.getElementById("start-menu-username").textContent = victim.username;
-      document.getElementById("win11-windows-layer").innerHTML = "";
-      toggleStartMenu(false);
-
-      const iconGrid = document.getElementById("win11-desktop-icons");
-      iconGrid.innerHTML = "";
-      victim.desktopIcons.forEach(item => {
-        const btn = document.createElement("button");
-        btn.className = "w-20 p-2 rounded-lg hover:bg-white/15 flex flex-col items-center gap-1 text-white text-center cursor-pointer group";
-        btn.onclick = item.action;
-        btn.innerHTML = `
-          <span class="text-3xl drop-shadow group-hover:scale-105 transition-transform">${item.icon}</span>
-          <span class="text-[11px] leading-tight drop-shadow line-clamp-2">${item.name}</span>
-        `;
-        iconGrid.appendChild(btn);
-      });
-
-      const mission = Object.values(MISSIONS).find(m => m.targetIp === victim.ip);
-      if (mission && mission.traceDuration > 0 && !gameState.completedMissions.includes(mission.id)) {
-        startTraceTimer(mission.traceDuration);
-      } else {
-        stopTraceTimer();
-      }
-    }
-
-    function disconnectRDP(forced = false) {
-      const prevIp = activeRdpIp;
-      activeRdpIp = null; stopTraceTimer();
-      document.getElementById("rdp-view").classList.add("hidden");
-      document.getElementById("cli-view").classList.remove("hidden");
-      if (!forced && prevIp) {
-        sfx.beep(); printLine(`[RDP] 已中斷與 ${prevIp} 之遠端桌面連線。`, "text-[#00ff41]");
-      }
-      updateRightSidebar(); focusTerminalInput();
-    }
-
-    function toggleStartMenu(forceState) {
-      const menu = document.getElementById("win11-start-menu");
-      menu.classList.toggle("hidden", typeof forceState === "boolean" ? !forceState : undefined);
-    }
-    function handleDesktopClick(e) {
-      if (e.target.id === "win11-desktop") toggleStartMenu(false);
-    }
-
-    function showWin11Toast(title, msg) {
-      const toast = document.getElementById("win11-toast");
-      document.getElementById("win11-toast-title").textContent = title;
-      document.getElementById("win11-toast-msg").textContent = msg;
-      toast.classList.remove("hidden"); sfx.success();
-      setTimeout(() => toast.classList.add("hidden"), 4000);
-    }
-
-    /* =========================================================================
-       9. DRAGGABLE WINDOWS ENGINE & APPLICATIONS
-    ========================================================================= */
-    function createWin11Window({ id, title, icon, widthClass = "w-[92%] max-w-[620px]", heightClass = "h-[400px]", contentHtml }) {
-      const layer = document.getElementById("win11-windows-layer");
-      const existing = document.getElementById(`win-app-${id}`);
-      if (existing) {
-        existing.style.zIndex = ++windowZIndex;
-        if (contentHtml) existing.querySelector(".win-body").innerHTML = contentHtml;
-        return existing;
-      }
-
-      const win = document.createElement("div");
-      win.id = `win-app-${id}`;
-      win.className = `win11-window active-win pointer-events-auto absolute top-10 left-1/2 -translate-x-1/2 sm:left-20 sm:translate-x-0 ${widthClass} ${heightClass}`;
-      win.style.zIndex = ++windowZIndex;
-
-      win.onmousedown = () => {
-        document.querySelectorAll(".win11-window").forEach(w => w.classList.remove("active-win"));
-        win.classList.add("active-win"); win.style.zIndex = ++windowZIndex;
-      };
-
-      win.innerHTML = `
-        <div class="win-titlebar h-9 bg-[#14171d] border-b border-white/10 px-3 flex items-center justify-between cursor-move shrink-0">
-          <div class="flex items-center gap-2 text-xs font-medium text-gray-200">
-            <span>${icon}</span><span>${title}</span>
-          </div>
-          <button onclick="document.getElementById('win-app-${id}').remove()" class="w-6 h-6 rounded hover:bg-red-600 flex items-center justify-center text-xs">✕</button>
-        </div>
-        <div class="win-body flex-1 overflow-auto bg-[#1c1f26] text-gray-100 text-xs sm:text-sm">
-          ${contentHtml}
-        </div>
-      `;
-
-      layer.appendChild(win);
-      makeWindowDraggable(win);
-      return win;
-    }
-
-    function makeWindowDraggable(winEl) {
-      const titleBar = winEl.querySelector(".win-titlebar");
-      let isDragging = false, startX, startY, origLeft, origTop;
-      titleBar.addEventListener("mousedown", (e) => {
-        if (e.target.tagName === "BUTTON") return;
-        isDragging = true;
-        const rect = winEl.getBoundingClientRect();
-        const parentRect = winEl.parentElement.getBoundingClientRect();
-        winEl.style.transform = "none";
-        origLeft = rect.left - parentRect.left; origTop = rect.top - parentRect.top;
-        winEl.style.left = `${origLeft}px`; winEl.style.top = `${origTop}px`;
-        startX = e.clientX; startY = e.clientY;
-      });
-      window.addEventListener("mousemove", (e) => {
-        if (!isDragging) return;
-        winEl.style.left = `${Math.max(0, origLeft + (e.clientX - startX))}px`;
-        winEl.style.top = `${Math.max(0, origTop + (e.clientY - startY))}px`;
-      });
-      window.addEventListener("mouseup", () => isDragging = false);
-    }
-
-    function openWinApp(appType) {
-      if (!activeRdpIp) return;
-      if (appType === "explorer") renderFileExplorer("documents");
-      else if (appType === "recycle") renderFileExplorer("recycle");
-      else if (appType === "edge") renderEdgeBrowser();
-      else if (appType === "taskmgr") renderTaskManager();
-      else if (appType === "cmd") renderWinCmd();
-    }
-
-    function renderTaskManager() {
-      const html = `
-        <div class="p-4 space-y-3 bg-[#181b22] h-full flex flex-col justify-between">
-          <div>
-            <div class="flex items-center justify-between border-b border-white/10 pb-2 mb-3">
-              <span class="font-bold text-xs text-cyan-300">⚡ 工作管理員 (Task Manager) — 處理程序監控</span>
-              <span class="text-[11px] text-gray-400">CPU: 24% | RAM: 4.2 GB</span>
-            </div>
-            <div class="space-y-1.5 font-mono text-xs" id="taskmgr-list">
-              <div class="flex items-center justify-between p-2 rounded bg-white/5 border border-white/10">
-                <span>System</span><span class="text-gray-400">系統核心</span>
-              </div>
-              <div class="flex items-center justify-between p-2 rounded bg-white/5 border border-white/10">
-                <span>explorer.exe</span><span class="text-gray-400">桌面圖形介面</span>
-              </div>
-              <div id="proc-defender" class="flex items-center justify-between p-2 rounded bg-red-950/80 border border-red-500/50">
-                <div>
-                  <div class="font-bold text-red-300">DefenderAgent.exe</div>
-                  <div class="text-[10px] text-red-400">威脅偵測中 (警報加速 2.0x)</div>
-                </div>
-                <button onclick="killWinProc('proc-defender', 'DefenderAgent.exe')" class="px-2.5 py-1 rounded bg-red-600 hover:bg-red-500 text-white font-bold text-xs cursor-pointer">
-                  結束工作
-                </button>
-              </div>
-              <div id="proc-trace" class="flex items-center justify-between p-2 rounded bg-red-950/80 border border-red-500/50">
-                <div>
-                  <div class="font-bold text-red-300">TraceDaemon.exe</div>
-                  <div class="text-[10px] text-red-400">反向追蹤主程式</div>
-                </div>
-                <button onclick="killWinProc('proc-trace', 'TraceDaemon.exe')" class="px-2.5 py-1 rounded bg-red-600 hover:bg-red-500 text-white font-bold text-xs cursor-pointer">
-                  結束工作
-                </button>
-              </div>
-              <div id="proc-ai" class="flex items-center justify-between p-2 rounded bg-purple-950/80 border border-purple-500/50">
-                <div>
-                  <div class="font-bold text-purple-300">AIDefence1 / 2 / 3.exe</div>
-                  <div class="text-[10px] text-purple-400">天網 AI 防禦子程式 (關卡 6)</div>
-                </div>
-                <button onclick="killWinProc('proc-ai', 'AIDefence.exe')" class="px-2.5 py-1 rounded bg-purple-600 hover:bg-purple-500 text-white font-bold text-xs cursor-pointer">
-                  結束工作
-                </button>
-              </div>
-            </div>
-          </div>
-          <div class="text-[11px] text-gray-400 border-t border-white/10 pt-2">
-            提示：終止防毒與追蹤程序可大幅降低被反向追蹤倒數的威脅！
-          </div>
-        </div>
-      `;
-      createWin11Window({ id: "taskmgr", title: "工作管理員", icon: "⚡", contentHtml: html });
-    }
-
-    function killWinProc(elementId, procName) {
-      const el = document.getElementById(elementId);
-      if (el) el.remove();
-      sfx.success();
-      showWin11Toast("程序已終止", `已成功結束 ${procName}！追蹤威脅已降溫。`);
-      if (procName === "AIDefence.exe") gameState.aiProcKilled = true;
-    }
-
-    function renderWinCmd() {
-      const victim = VICTIM_SYSTEMS[activeRdpIp];
-      const html = `
-        <div class="p-3 bg-black text-emerald-400 font-mono h-full flex flex-col justify-between text-xs leading-relaxed">
-          <div id="wincmd-output" class="space-y-1">
-            <div>Microsoft Windows [Version 10.0.22631.2861]</div>
-            <div>(c) Microsoft Corporation. All rights reserved.</div>
-            <div class="mt-2 text-yellow-300">可執行命令: ipconfig, net user, dir</div>
-          </div>
-          <div class="flex items-center gap-2 border-t border-gray-800 pt-2">
-            <span>C:\\Users\\${victim ? victim.username : "User"}&gt;</span>
-            <input id="wincmd-input" type="text" class="flex-1 bg-transparent outline-none text-white font-mono" onkeydown="handleWinCmdInput(event)" />
-          </div>
-        </div>
-      `;
-      createWin11Window({ id: "cmd", title: "命令提示字元 (CMD)", icon: "💻", contentHtml: html });
-    }
-
-    function handleWinCmdInput(e) {
-      if (e.key === "Enter") {
-        const input = document.getElementById("wincmd-input");
-        const val = input.value.trim().toLowerCase();
-        const out = document.getElementById("wincmd-output");
-        const victim = VICTIM_SYSTEMS[activeRdpIp];
-        input.value = "";
-        sfx.keyClick();
-
-        const line = document.createElement("div");
-        line.textContent = `C:\\Users\\${victim ? victim.username : "User"}> ${val}`;
-        line.className = "text-white font-bold mt-1";
-        out.appendChild(line);
-
-        if (val === "ipconfig") {
-          const resp = document.createElement("div");
-          resp.className = "text-gray-300";
-          resp.innerHTML = `IPv4 Address . . . . . . . . . . . : ${victim ? victim.ip : "192.168.1.1"}<br>Subnet Mask . . . . . . . . . . . : 255.255.255.0<br>Default Gateway . . . . . . . . . : ${victim ? victim.ip.replace(/\.\d+$/, ".1") : "192.168.1.1"}`;
-          out.appendChild(resp);
-        } else if (val === "net user") {
-          const resp = document.createElement("div");
-          resp.className = "text-gray-300";
-          resp.innerHTML = `User accounts for \\\\${victim ? victim.hostname : "PC"}:<br>--------------------------------------------------<br>Administrator     ${victim ? victim.username : "User"}     Guest`;
-          out.appendChild(resp);
-        } else if (val === "dir") {
-          const resp = document.createElement("div");
-          resp.className = "text-gray-300";
-          resp.innerHTML = `Directory of C:\\Users\\${victim ? victim.username : "User"}<br>2026/11/27  20:14    &lt;DIR&gt;          Desktop<br>2026/11/27  20:14    &lt;DIR&gt;          Documents<br>2026/11/27  20:14    &lt;DIR&gt;          Downloads`;
-          out.appendChild(resp);
         } else {
-          const resp = document.createElement("div");
-          resp.className = "text-red-400";
-          resp.textContent = `'${val}' is not recognized as an internal command.`;
-          out.appendChild(resp);
+          mBadge.textContent = "未接取";
+          mBadge.className = "text-[11px] px-2 py-0.5 rounded bg-[#00ff41]/20 text-[#00ff41]";
+          mContent.innerHTML = `
+            <p>歡迎來到硬核滲透矩陣。</p>
+            <p class="text-[#00ff41]">請輸入 <code class="bg-black px-1 rounded border border-[#00ff41]/40">missions</code> 推進主線，輸入 <code class="bg-black px-1 rounded border border-[#00ff41]/40 text-amber-300">bounty</code> 搶限時暗網懸賞，或輸入 <code class="bg-black px-1 rounded border border-[#00ff41]/40 text-cyan-300">whitehat</code> 接取防禦懸賞！</p>
+          `;
+        }
+      }
+
+      if (hostsList) {
+        const discovered = gameState.discoveredHosts || [];
+        if (discovered.length === 0) {
+          hostsList.innerHTML = `<div class="italic">尚未執行 scan</div>`;
+        } else {
+          hostsList.innerHTML = discovered.map(ip => {
+            const cracked = !!(gameState.crackedHosts && gameState.crackedHosts[ip]);
+            const isWhiteHat = (ip === gameState.whiteHatTarget);
+            return `
+              <div class="flex items-center justify-between bg-black/50 px-2 py-1 rounded border border-[#00ff41]/20">
+                <span class="text-white font-mono flex items-center gap-1">${ip} ${isWhiteHat ? '<span class="text-cyan-400" title="白帽懸賞目標">🛡️</span>' : ""}</span>
+                <span class="${cracked ? "text-emerald-400 font-bold" : "text-yellow-400"}">
+                  ${cracked ? "已解鎖 ✓" : "未解鎖"}
+                </span>
+              </div>
+            `;
+          }).join("");
         }
       }
     }
