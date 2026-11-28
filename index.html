@@ -149,6 +149,7 @@
         <span id="proxy-badge" class="px-2 py-0.5 rounded border border-gray-600 text-gray-400">PROXY: 未關聯</span>
         <span id="sound-status-badge" class="px-2 py-0.5 rounded border border-[#00ff41]/40 text-[#00ff41] cursor-pointer" onclick="toggleSoundFromBadge()">音效: 開啟</span>
         <button id="pvp-arena-btn" type="button" onclick="openPvpArenaModal()" class="px-2.5 py-0.5 rounded border border-purple-400/70 bg-purple-950/60 hover:bg-purple-900/80 text-purple-200 font-bold cursor-pointer transition-colors">⚔️ PvP 賭金大廳</button>
+        <button id="admin-panel-btn" type="button" onclick="handleAdminHeaderClick()" class="px-2.5 py-0.5 rounded border border-amber-400/70 bg-amber-950/60 hover:bg-amber-900/80 text-amber-200 font-bold cursor-pointer transition-colors">🛡️ Admin</button>
         <button id="logout-btn" type="button" onclick="logoutAccount()" class="px-2.5 py-0.5 rounded border border-red-500/60 bg-red-950/50 hover:bg-red-900/70 text-red-300 font-bold cursor-pointer transition-colors">登出</button>
       </div>
     </header>
@@ -287,7 +288,8 @@
             <li><span class="text-red-400 font-bold">nmap / breach / exploit / ddos</span> — 指令攻破對方 IP</li>
             <li><span class="text-cyan-300 font-bold">fortify</span> / <span class="text-gray-300 font-bold">pvpstatus</span> — 強化防禦 / 查戰況</li>
             <li><span class="text-pink-400 font-bold">drill</span> — 啟動高壓 Hex 反應特訓賺 BTC</li>
-            <li><span class="text-yellow-300 font-bold">chat [msg]</span> — 在大廳發送訊息</li>
+            <li><span class="text-yellow-300 font-bold">chat [msg]</span> — 在大廳發送訊息 (含防髒話過濾)</li>
+            <li><span class="text-amber-400 font-bold">admin</span> — 開啟 Admin 專屬管理系統</li>
           </ul>
         </div>
       </aside>
@@ -481,6 +483,100 @@
   </div>
 
   <!-- =========================================================
+       ADMIN EXCLUSIVE CONTROL PANEL & ANTI-PROFANITY MODAL
+  ========================================================== -->
+  <div id="admin-modal" class="hidden fixed inset-0 z-50 bg-black/85 flex flex-col items-center justify-center p-4">
+    <div class="max-w-2xl w-full matrix-border rounded-lg p-5 bg-[#0a0804] border-amber-400/60 text-white space-y-4 max-h-[90vh] overflow-y-auto term-scroll">
+      <div class="flex items-center justify-between border-b border-amber-400/35 pb-2.5">
+        <div>
+          <h3 class="font-bold text-base sm:text-lg text-amber-300">🛡️ NETRUNNER ADMIN 專屬中控台</h3>
+          <p class="text-[11px] text-gray-400">管理員專屬權限、全服系統廣播、玩家禁言控制與 Chat 防髒話詞庫中心</p>
+        </div>
+        <button type="button" onclick="closeAdminModal()" class="px-2.5 py-1 rounded bg-gray-800 hover:bg-gray-700 text-xs text-gray-200 cursor-pointer">關閉 ✕</button>
+      </div>
+
+      <!-- Inline Admin Notice -->
+      <div id="admin-modal-notice" class="hidden px-3 py-2 rounded border text-xs font-mono"></div>
+
+      <!-- Admin Authentication View -->
+      <div id="admin-auth-section" class="p-4 rounded-lg border border-amber-500/40 bg-black/60 space-y-3">
+        <div class="text-xs font-bold text-amber-300">🔐 ROOT 管理員金鑰驗證</div>
+        <p class="text-[11px] text-gray-300">請輸入管理員存取密鑰以解鎖中控台（預設測試密鑰：<code class="text-amber-300 bg-black px-1.5 py-0.5 rounded border border-amber-500/40">NETRUNNER-ROOT</code>）。</p>
+        <div class="flex flex-col sm:flex-row gap-2">
+          <input id="admin-passcode-input" type="password" placeholder="輸入管理員密鑰..." onkeydown="if(event.key==='Enter') submitAdminLogin()" class="flex-1 bg-black border border-amber-400/50 rounded px-3 py-2 text-xs font-mono text-amber-200 outline-none" />
+          <button type="button" onclick="submitAdminLogin()" class="px-4 py-2 rounded bg-amber-600 hover:bg-amber-500 text-black font-bold text-xs cursor-pointer transition">驗證並進入</button>
+        </div>
+      </div>
+
+      <!-- Authenticated Admin Dashboard -->
+      <div id="admin-dashboard-section" class="hidden space-y-4 text-xs">
+        <!-- Quick Actions & Resource Control -->
+        <div class="p-3.5 rounded-lg border border-amber-400/30 bg-black/50 space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="font-bold text-amber-300">⚡ 管理員特權工具</span>
+            <button type="button" onclick="logoutAdminMode()" class="px-2.5 py-1 rounded bg-red-900/70 hover:bg-red-800 text-red-200 text-[11px] font-bold cursor-pointer">鎖定退出 Admin</button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+            <div class="flex gap-1.5">
+              <input id="admin-btc-input" type="number" value="500" step="50" class="w-full bg-black border border-yellow-400/40 rounded px-2.5 py-1.5 font-mono text-yellow-300 outline-none" placeholder="BTC 數量" />
+              <button type="button" onclick="adminGiveBtcFromModal()" class="px-3 py-1.5 rounded bg-yellow-600 hover:bg-yellow-500 text-black font-bold whitespace-nowrap cursor-pointer">+ 發放 BTC</button>
+            </div>
+            <div class="flex gap-1.5">
+              <input id="admin-rep-input" type="number" value="100" step="10" class="w-full bg-black border border-cyan-400/40 rounded px-2.5 py-1.5 font-mono text-cyan-300 outline-none" placeholder="聲望值" />
+              <button type="button" onclick="adminGiveRepFromModal()" class="px-3 py-1.5 rounded bg-cyan-600 hover:bg-cyan-500 text-black font-bold whitespace-nowrap cursor-pointer">+ 發放聲望</button>
+            </div>
+          </div>
+
+          <div class="flex flex-wrap gap-2">
+            <button type="button" onclick="adminUnlockAllShop()" class="px-3 py-1.5 rounded bg-emerald-700 hover:bg-emerald-600 text-white font-bold cursor-pointer">🔓 解鎖全部裝備</button>
+            <button type="button" onclick="adminSpawnBounty()" class="px-3 py-1.5 rounded bg-purple-700 hover:bg-purple-600 text-white font-bold cursor-pointer">⚡ 立即發佈零日懸賞</button>
+            <button type="button" onclick="adminStopTrace()" class="px-3 py-1.5 rounded bg-blue-700 hover:bg-blue-600 text-white font-bold cursor-pointer">🛡️ 清除反向追蹤</button>
+            <button type="button" onclick="adminClearLocalChat()" class="px-3 py-1.5 rounded bg-gray-700 hover:bg-gray-600 text-gray-100 font-bold cursor-pointer">🧹 清空本機 IRC 畫面</button>
+          </div>
+        </div>
+
+        <!-- Global Admin Broadcast -->
+        <div class="p-3.5 rounded-lg border border-yellow-400/30 bg-black/50 space-y-2">
+          <div class="font-bold text-yellow-300">📢 全服系統公告廣播 ([👑 ADMIN])</div>
+          <div class="flex gap-2">
+            <input id="admin-broadcast-input" type="text" onkeydown="if(event.key==='Enter') adminBroadcastFromModal()" placeholder="輸入要發送到全球大廳的公告訊息..." class="flex-1 bg-black border border-yellow-400/40 rounded px-2.5 py-1.5 font-mono text-yellow-100 outline-none" />
+            <button type="button" onclick="adminBroadcastFromModal()" class="px-4 py-1.5 rounded bg-amber-500 hover:bg-amber-400 text-black font-bold cursor-pointer">發送公告</button>
+          </div>
+        </div>
+
+        <!-- Chat Anti-Profanity Filter Control -->
+        <div class="p-3.5 rounded-lg border border-emerald-400/30 bg-black/50 space-y-2.5">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <span class="font-bold text-emerald-300">🧼 Chat 防髒話過濾系統</span>
+            <div class="flex items-center gap-2">
+              <button id="admin-filter-toggle-btn" type="button" onclick="adminToggleFilterEnabled()" class="px-2.5 py-1 rounded bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-[11px] cursor-pointer">過濾: 開啟</button>
+              <button id="admin-filter-mode-btn" type="button" onclick="adminToggleFilterMode()" class="px-2.5 py-1 rounded bg-cyan-800 hover:bg-cyan-700 text-cyan-100 font-bold text-[11px] cursor-pointer">模式: 星號遮蔽 (***)</button>
+            </div>
+          </div>
+          <div class="flex gap-2">
+            <input id="admin-badword-input" type="text" onkeydown="if(event.key==='Enter') adminAddFilterWord()" placeholder="新增自訂封鎖詞彙..." class="flex-1 bg-black border border-emerald-400/40 rounded px-2.5 py-1.5 font-mono text-emerald-200 outline-none" />
+            <button type="button" onclick="adminAddFilterWord()" class="px-3 py-1.5 rounded bg-emerald-600 hover:bg-emerald-500 text-white font-bold cursor-pointer">+ 新增詞彙</button>
+          </div>
+          <div id="admin-badwords-list" class="flex flex-wrap gap-1.5 max-h-28 overflow-y-auto term-scroll p-2 rounded bg-black/60 border border-white/10"></div>
+        </div>
+
+        <!-- Player Mute Management -->
+        <div class="p-3.5 rounded-lg border border-red-400/30 bg-black/50 space-y-2.5">
+          <div class="font-bold text-red-300">🔇 玩家禁言管控名單</div>
+          <div class="flex gap-2">
+            <input id="admin-mute-input" type="text" onkeydown="if(event.key==='Enter') adminMuteUserFromModal()" placeholder="輸入玩家代號 (例如 Anon_1234)..." class="flex-1 bg-black border border-red-400/40 rounded px-2.5 py-1.5 font-mono text-red-200 outline-none" />
+            <button type="button" onclick="adminMuteUserFromModal()" class="px-3 py-1.5 rounded bg-red-600 hover:bg-red-500 text-white font-bold cursor-pointer">禁言玩家</button>
+          </div>
+          <div id="admin-muted-list" class="flex flex-wrap gap-1.5 text-[11px]">
+            <span class="text-gray-500 italic">目前沒有被禁言的玩家。</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================
        FIREWALL HEX BYPASS MINI-GAME MODAL OVERLAY
   ========================================================== -->
   <div id="hex-game-modal" class="hidden fixed inset-0 z-50 bg-black/90 flex flex-col items-center justify-center p-4">
@@ -666,8 +762,46 @@
           console.warn("PvP matches listener fallback:", err);
         });
 
+        // 監聽全服防髒話與禁言規則（若 Firestore 規則未開放則自動退回本機模式）
+        onSnapshot(getDocPath("system_config", "moderation"), (snap) => {
+          if (snap.exists() && typeof window.syncModerationConfigFromCloud === "function") {
+            window.syncModerationConfigFromCloud(snap.data());
+          }
+        }, (err) => {
+          console.warn("Moderation config listener fallback:", err);
+        });
+
         window.multiplayerActive = true;
       }
+
+      window.saveModerationConfigCloud = async (cfg) => {
+        if (!window.multiplayerActive) return false;
+        try {
+          await setDoc(getDocPath("system_config", "moderation"), {
+            ...cfg,
+            updatedAt: Date.now()
+          }, { merge: true });
+          return true;
+        } catch (err) {
+          console.warn("同步防髒話/禁言規則失敗 (使用本地規則):", err);
+          return false;
+        }
+      };
+
+      window.sendAdminBroadcastToCloud = async (msg) => {
+        if (!window.multiplayerActive) return false;
+        try {
+          await addDoc(getPath("chat_messages"), {
+            handle: "ADMIN",
+            text: msg,
+            timestamp: Date.now()
+          });
+          return true;
+        } catch (err) {
+          console.warn("sendAdminBroadcastToCloud err:", err);
+          return false;
+        }
+      };
 
       window.publishPvpMatchCloud = async (matchObj) => {
         if (!window.multiplayerActive) return false;
@@ -1558,10 +1692,22 @@
         log.innerHTML = "";
         msgs.slice(-25).forEach(m => {
           const isSys = m.handle === "SYSTEM";
-          const nameColor = isSys ? "text-purple-500" : (m.handle === window.myHandle ? "text-yellow-400" : "text-cyan-400");
+          const isAdminMsg = m.handle === "ADMIN";
+          const nameColor = isAdminMsg
+            ? "text-amber-300"
+            : isSys
+              ? "text-purple-500"
+              : (m.handle === window.myHandle ? "text-yellow-400" : "text-cyan-400");
+          const msgColor = isAdminMsg
+            ? "text-amber-200 font-bold"
+            : isSys
+              ? "text-purple-300"
+              : "text-gray-300";
+          const prefix = isAdminMsg ? "👑 ADMIN" : m.handle;
+          const safeDisplay = typeof maskProfanityForDisplay === "function" ? maskProfanityForDisplay(m.text) : m.text;
           const div = document.createElement("div");
           div.className = "mb-1 leading-tight";
-          div.innerHTML = `<span class="${nameColor} font-bold">[${escapeHtml(m.handle)}]</span> <span class="${isSys ? "text-purple-300" : "text-gray-300"}">${escapeHtml(m.text)}</span>`;
+          div.innerHTML = `<span class="${nameColor} font-bold">[${escapeHtml(prefix)}]</span> <span class="${msgColor}">${escapeHtml(safeDisplay)}</span>`;
           log.appendChild(div);
         });
         log.scrollTop = log.scrollHeight;
@@ -1603,7 +1749,7 @@
       "help", "missions", "accept", "scan", "nmap", "analyze", "bypass",
       "crack", "rdp", "ssh", "decode", "shop", "buy", "proxy", "clear", "sound", "reset",
       "chat", "whitehat", "patch", "hackplayer", "setname", "bounty", "claim", "drill",
-      "pvp", "joinpvp", "cancelpvp", "breach", "exploit", "ddos", "fortify", "pvpstatus", "surrender", "logout"
+      "pvp", "joinpvp", "cancelpvp", "breach", "exploit", "ddos", "fortify", "pvpstatus", "surrender", "admin", "logout"
     ];
 
     termInput.addEventListener("keydown", (e) => {
@@ -1681,15 +1827,20 @@
           printLine("\n  [懸賞、特訓與多人大廳]", "text-amber-300");
           printLine("  bounty / claim [code] - 查看或搶標限時零日懸賞");
           printLine("  drill                 - 啟動 14 秒高壓 Hex 反應特訓賺 BTC");
-          printLine("  chat [msg]            - 傳送訊息到全球線上大廳 (IRC)");
+          printLine("  chat [msg]            - 傳送訊息到全球線上大廳 (內建防髒話過濾)");
           printLine("  setname [name]        - 更改你在線上大廳的駭客代號");
           printLine("  whitehat / patch [ip] - 接取並修補企業 0-day 漏洞懸賞");
           printLine("  hackplayer [name]     - 突襲線上大廳其他玩家竊取 BTC");
-          printLine("\n  [系統與裝備]", "text-yellow-300");
+          printLine("\n  [Admin 管理與系統]", "text-yellow-300");
+          printLine("  admin [指令]          - 開啟 Admin 面板或執行管理指令 (help: admin help)");
           printLine("  shop / buy [item_id]  - 瀏覽與購買暗網裝備 (BTC 交易)");
           printLine("  proxy [on|off]        - 開啟/關閉跳板代理延緩追蹤倒數");
           printLine("  clear / sound / reset - 系統設定");
           printLine("  logout                - 登出帳號並返回 login.html\n");
+          break;
+
+        case "admin":
+          handleAdminCommand(parts.slice(1));
           break;
 
         case "pvp": {
@@ -2014,10 +2165,27 @@
         case "setname": {
           if (!arg1) { sfx.error(); printLine("[用法] setname [新名稱]", "text-red-400"); return; }
           const newName = arg1.substring(0, 12);
+          if (moderationConfig.filterEnabled && detectProfanity(newName).matched) {
+            sfx.error();
+            printLine("[🛡️ 防髒話系統] 駭客代號包含不雅或違禁詞彙，已拒絕更改！", "text-red-400 font-bold");
+            return;
+          }
+          if (newName.toUpperCase() === "ADMIN" || newName.toUpperCase() === "SYSTEM") {
+            sfx.error();
+            printLine("[系統] 此名稱為系統保留字，無法使用。", "text-red-400");
+            return;
+          }
           if (window.setMyHandle) window.setMyHandle(newName);
           else window.myHandle = newName;
           gameState.handle = newName; saveState();
           sfx.success(); printLine(`[系統] 代號已成功更改為: ${newName}`, "text-emerald-300 font-bold");
+          break;
+        }
+
+        case "chat": {
+          if (!arg1) { sfx.error(); printLine("[用法] chat [訊息內容]", "text-red-400"); return; }
+          const rawMsg = parts.slice(1).join(" ");
+          handleSafeChatSend(rawMsg);
           break;
         }
 
@@ -3713,6 +3881,549 @@
         printLine(`恭喜你！已制霸全部 6 大暗網合約！成為傳奇 Hacker LEGEND！`, "text-yellow-300 font-bold matrix-glow");
       }
       printLine(`======================================================\n`, "text-emerald-400");
+    }
+
+    /* =========================================================================
+       10. ADMIN EXCLUSIVE SYSTEM & CHAT ANTI-PROFANITY FILTER
+    ========================================================================= */
+    const ADMIN_PASSCODE = "NETRUNNER-ROOT";
+    const MODERATION_STORAGE_KEY = "netrunner_moderation_config_v1";
+
+    const DEFAULT_BAD_WORDS = [
+      "fuck", "shit", "bitch", "asshole", "bastard", "damn", "stfu", "wtf", "idiot", "stupid",
+      "操你", "幹你", "靠北", "白痴", "智障", "廢物", "垃圾", "去死", "王八蛋", "混蛋",
+      "他媽的", "媽的", "賤人", "北七", "滾蛋", "腦殘", "神經病"
+    ];
+
+    let isAdminAuthenticated = false;
+    let profanityStrikes = 0;
+    let selfAutoMuteUntil = 0;
+
+    function loadModerationConfig() {
+      try {
+        const saved = localStorage.getItem(MODERATION_STORAGE_KEY);
+        if (saved) {
+          const parsed = JSON.parse(saved);
+          return {
+            filterEnabled: parsed.filterEnabled !== false,
+            filterMode: parsed.filterMode === "block" ? "block" : "mask",
+            badWords: Array.isArray(parsed.badWords) && parsed.badWords.length ? parsed.badWords : [...DEFAULT_BAD_WORDS],
+            mutedUsers: Array.isArray(parsed.mutedUsers) ? parsed.mutedUsers : []
+          };
+        }
+      } catch (e) {}
+      return {
+        filterEnabled: true,
+        filterMode: "mask",
+        badWords: [...DEFAULT_BAD_WORDS],
+        mutedUsers: []
+      };
+    }
+
+    let moderationConfig = loadModerationConfig();
+
+    function saveModerationConfig(syncCloud = true) {
+      try {
+        localStorage.setItem(MODERATION_STORAGE_KEY, JSON.stringify(moderationConfig));
+      } catch (e) {}
+      if (syncCloud && typeof window.saveModerationConfigCloud === "function") {
+        window.saveModerationConfigCloud(moderationConfig);
+      }
+      renderAdminModerationUI();
+    }
+
+    window.syncModerationConfigFromCloud = function(cloudCfg) {
+      if (!cloudCfg || typeof cloudCfg !== "object") return;
+      moderationConfig = {
+        filterEnabled: cloudCfg.filterEnabled !== false,
+        filterMode: cloudCfg.filterMode === "block" ? "block" : "mask",
+        badWords: Array.isArray(cloudCfg.badWords) && cloudCfg.badWords.length ? cloudCfg.badWords : [...DEFAULT_BAD_WORDS],
+        mutedUsers: Array.isArray(cloudCfg.mutedUsers) ? cloudCfg.mutedUsers : []
+      };
+      try {
+        localStorage.setItem(MODERATION_STORAGE_KEY, JSON.stringify(moderationConfig));
+      } catch (e) {}
+      renderAdminModerationUI();
+    };
+
+    function escapeRegExp(str) {
+      return String(str).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    }
+
+    // 偵測並替換不雅字詞（支援英文大小寫與符號穿插繞過，例如 f.u.c.k）
+    function detectProfanity(text) {
+      const source = String(text || "");
+      let sanitized = source;
+      const hits = [];
+
+      for (const rawWord of moderationConfig.badWords) {
+        const word = String(rawWord || "").trim();
+        if (!word) continue;
+        const chars = Array.from(word).map(ch => escapeRegExp(ch));
+        const pattern = new RegExp(chars.join("[\\s._\\-*~`'\"]*"), "gi");
+        if (pattern.test(sanitized)) {
+          hits.push(word);
+          sanitized = sanitized.replace(pattern, (matched) => "*".repeat(Math.max(2, matched.length)));
+        }
+      }
+
+      return {
+        matched: hits.length > 0,
+        hits,
+        sanitized
+      };
+    }
+
+    function maskProfanityForDisplay(text) {
+      if (!moderationConfig.filterEnabled) return String(text || "");
+      return detectProfanity(text).sanitized;
+    }
+    window.maskProfanityForDisplay = maskProfanityForDisplay;
+
+    function appendLocalIrcLine(handle, text) {
+      const log = document.getElementById("irc-log");
+      if (!log) return;
+      const isAdminMsg = handle === "ADMIN";
+      const isSys = handle === "SYSTEM";
+      const nameColor = isAdminMsg ? "text-amber-300" : isSys ? "text-purple-500" : "text-yellow-400";
+      const msgColor = isAdminMsg ? "text-amber-200 font-bold" : isSys ? "text-purple-300" : "text-gray-300";
+      const div = document.createElement("div");
+      div.className = "mb-1 leading-tight";
+      div.innerHTML = `<span class="${nameColor} font-bold">[${escapeHtml(isAdminMsg ? "👑 ADMIN" : handle)}]</span> <span class="${msgColor}">${escapeHtml(text)}</span>`;
+      log.appendChild(div);
+      log.scrollTop = log.scrollHeight;
+    }
+
+    function handleSafeChatSend(rawMsg) {
+      const myHandle = gameState.handle || window.myHandle || "Anon_Hacker";
+
+      // 1. 檢查是否遭管理員禁言或自動禁言（Admin 免疫）
+      if (!isAdminAuthenticated) {
+        if (moderationConfig.mutedUsers.some(u => u.toLowerCase() === myHandle.toLowerCase())) {
+          sfx.error();
+          printLine("[🔇 禁言中] 你的代號已被 Admin 列入大廳禁言名單，目前無法發言。", "text-red-400 font-bold");
+          return;
+        }
+        if (Date.now() < selfAutoMuteUntil) {
+          const remainSec = Math.ceil((selfAutoMuteUntil - Date.now()) / 1000);
+          sfx.error();
+          printLine(`[🔇 自動禁言中] 因多次觸發防髒話系統，尚需等待 ${remainSec} 秒才可發言。`, "text-red-400 font-bold");
+          return;
+        }
+      }
+
+      // 2. 防髒話偵測與處理
+      let finalMsg = rawMsg;
+      if (moderationConfig.filterEnabled && !isAdminAuthenticated) {
+        const result = detectProfanity(rawMsg);
+        if (result.matched) {
+          profanityStrikes++;
+          adjustReputation(-5, "觸發 Chat 防髒話淨化系統", true);
+          sfx.error();
+
+          if (profanityStrikes >= 3) {
+            selfAutoMuteUntil = Date.now() + 60000;
+            profanityStrikes = 0;
+            printLine("[🛡️ 防髒話系統 ⚠] 違規次數達 3 次，系統已自動禁言 60 秒！", "text-red-500 font-bold");
+            return;
+          }
+
+          if (moderationConfig.filterMode === "block") {
+            printLine(`[🛡️ 防髒話攔截] 訊息包含不雅詞彙，已直接禁止發送！(違規累計 ${profanityStrikes}/3)`, "text-red-400 font-bold");
+            return;
+          } else {
+            finalMsg = result.sanitized;
+            printLine(`[🛡️ 防髒話淨化] 已自動以星號遮蔽不雅字詞！(違規累計 ${profanityStrikes}/3)`, "text-amber-300");
+          }
+        }
+      }
+
+      sfx.keyClick();
+      if (window.sendChatToCloud && window.multiplayerActive) {
+        window.sendChatToCloud(finalMsg);
+        printLine(`[Chat] 訊息已發送: ${finalMsg}`, "text-gray-400");
+      } else {
+        appendLocalIrcLine(myHandle, finalMsg);
+        printLine(`[本地 IRC] ${myHandle}: ${finalMsg}`, "text-cyan-300");
+      }
+    }
+
+    // 修復並完整定義頂部 Admin 按鈕點擊事件
+    function handleAdminHeaderClick() {
+      openAdminModal();
+    }
+    window.handleAdminHeaderClick = handleAdminHeaderClick;
+
+    function openAdminModal() {
+      const modal = document.getElementById("admin-modal");
+      if (!modal) return;
+      modal.classList.remove("hidden");
+      syncAdminModalView();
+      renderAdminModerationUI();
+      sfx.beep();
+    }
+    window.openAdminModal = openAdminModal;
+
+    function closeAdminModal() {
+      const modal = document.getElementById("admin-modal");
+      if (modal) modal.classList.add("hidden");
+      focusTerminalInput();
+    }
+    window.closeAdminModal = closeAdminModal;
+
+    function showAdminModalNotice(msg, type = "info") {
+      const el = document.getElementById("admin-modal-notice");
+      if (!el) return;
+      const styles = {
+        info: "border-cyan-400/50 bg-cyan-950/50 text-cyan-200",
+        success: "border-emerald-400/60 bg-emerald-950/60 text-emerald-200",
+        warn: "border-amber-400/60 bg-amber-950/60 text-amber-200",
+        error: "border-red-500/60 bg-red-950/60 text-red-200"
+      };
+      el.className = `px-3 py-2 rounded border text-xs font-mono ${styles[type] || styles.info}`;
+      el.textContent = msg;
+      el.classList.remove("hidden");
+    }
+
+    function syncAdminModalView() {
+      const authSec = document.getElementById("admin-auth-section");
+      const dashSec = document.getElementById("admin-dashboard-section");
+      const btn = document.getElementById("admin-panel-btn");
+
+      if (authSec && dashSec) {
+        authSec.classList.toggle("hidden", isAdminAuthenticated);
+        dashSec.classList.toggle("hidden", !isAdminAuthenticated);
+      }
+      if (btn) {
+        btn.textContent = isAdminAuthenticated ? "👑 ADMIN (已解鎖)" : "🛡️ Admin";
+        btn.className = isAdminAuthenticated
+          ? "px-2.5 py-0.5 rounded border border-amber-300 bg-amber-500/30 hover:bg-amber-500/40 text-amber-200 font-bold cursor-pointer transition-colors"
+          : "px-2.5 py-0.5 rounded border border-amber-400/70 bg-amber-950/60 hover:bg-amber-900/80 text-amber-200 font-bold cursor-pointer transition-colors";
+      }
+    }
+
+    function submitAdminLogin() {
+      const input = document.getElementById("admin-passcode-input");
+      const code = (input ? input.value : "").trim();
+      if (code === ADMIN_PASSCODE) {
+        isAdminAuthenticated = true;
+        if (input) input.value = "";
+        sfx.success();
+        syncAdminModalView();
+        renderAdminModerationUI();
+        showAdminModalNotice("管理員驗證成功！已解鎖 NETRUNNER ROOT 專屬中控台。", "success");
+        printLine("\n[👑 ADMIN] 已通過管理員金鑰驗證，解鎖專屬管理權限！\n", "text-amber-300 font-bold");
+      } else {
+        sfx.error();
+        showAdminModalNotice("密鑰錯誤！存取遭到拒絕。（提示：NETRUNNER-ROOT）", "error");
+      }
+    }
+    window.submitAdminLogin = submitAdminLogin;
+
+    function logoutAdminMode() {
+      isAdminAuthenticated = false;
+      sfx.beep();
+      syncAdminModalView();
+      showAdminModalNotice("已鎖定並退出管理員模式。", "info");
+      printLine("[ADMIN] 已退出管理員特權模式。", "text-gray-400");
+    }
+    window.logoutAdminMode = logoutAdminMode;
+
+    function requireAdmin() {
+      if (!isAdminAuthenticated) {
+        sfx.error();
+        showAdminModalNotice("權限不足，請先驗證管理員密鑰！", "error");
+        return false;
+      }
+      return true;
+    }
+
+    function adminGiveBtcFromModal() {
+      if (!requireAdmin()) return;
+      const val = Number(document.getElementById("admin-btc-input")?.value || 0);
+      if (!Number.isFinite(val) || val === 0) return;
+      gameState.btc = Math.max(0, gameState.btc + val);
+      saveState();
+      updateBtcDisplay();
+      if (window.updatePresence) window.updatePresence();
+      sfx.success();
+      showAdminModalNotice(`已調整資產 ${val >= 0 ? "+" : ""}${val} BTC，目前資產：${gameState.btc.toFixed(4)} BTC`, "success");
+      printLine(`[👑 ADMIN] 已發放資產 ${val >= 0 ? "+" : ""}${val} BTC。`, "text-amber-300 font-bold");
+    }
+    window.adminGiveBtcFromModal = adminGiveBtcFromModal;
+
+    function adminGiveRepFromModal() {
+      if (!requireAdmin()) return;
+      const val = Math.floor(Number(document.getElementById("admin-rep-input")?.value || 0));
+      if (!Number.isFinite(val) || val === 0) return;
+      adjustReputation(val, "Admin 管理員發放聲望");
+      sfx.success();
+      showAdminModalNotice(`已調整聲望 ${val >= 0 ? "+" : ""}${val}，目前聲望：${gameState.reputation}`, "success");
+    }
+    window.adminGiveRepFromModal = adminGiveRepFromModal;
+
+    function adminUnlockAllShop() {
+      if (!requireAdmin()) return;
+      Object.keys(SHOP_ITEMS).forEach(id => {
+        if (!gameState.inventory.includes(id)) gameState.inventory.push(id);
+      });
+      gameState.activeProxyLevel = 3;
+      gameState.isProxyEnabled = true;
+      saveState();
+      updateRightSidebar();
+      sfx.success();
+      showAdminModalNotice("已解鎖所有暗網軍火裝備並啟用 Proxy v3！", "success");
+      printLine("[👑 ADMIN] 已解鎖全部商店裝備與量子跳板 v3。", "text-amber-300 font-bold");
+    }
+    window.adminUnlockAllShop = adminUnlockAllShop;
+
+    function adminSpawnBounty() {
+      if (!requireAdmin()) return;
+      spawnBountyEvent(true);
+      showAdminModalNotice("已強制釋出最新一輪暗網零日懸賞！", "success");
+    }
+    window.adminSpawnBounty = adminSpawnBounty;
+
+    function adminStopTrace() {
+      if (!requireAdmin()) return;
+      stopTraceTimer();
+      sfx.success();
+      showAdminModalNotice("已強制清除反向追蹤倒數！", "success");
+      printLine("[👑 ADMIN] 反向追蹤監控已歸零並重置為安全狀態。", "text-emerald-300 font-bold");
+    }
+    window.adminStopTrace = adminStopTrace;
+
+    function adminClearLocalChat() {
+      if (!requireAdmin()) return;
+      const log = document.getElementById("irc-log");
+      if (log) {
+        log.innerHTML = `<div><span class="text-amber-300 font-bold">[👑 ADMIN]</span> <span class="text-gray-300">大廳訊息視窗已由管理員清空。</span></div>`;
+      }
+      sfx.beep();
+      showAdminModalNotice("已清空本機大廳顯示紀錄。", "info");
+    }
+    window.adminClearLocalChat = adminClearLocalChat;
+
+    async function adminBroadcastFromModal() {
+      if (!requireAdmin()) return;
+      const input = document.getElementById("admin-broadcast-input");
+      const msg = (input ? input.value : "").trim();
+      if (!msg) return;
+      if (input) input.value = "";
+      await sendAdminAnnouncement(msg);
+    }
+    window.adminBroadcastFromModal = adminBroadcastFromModal;
+
+    async function sendAdminAnnouncement(msg) {
+      sfx.success();
+      let sentCloud = false;
+      if (typeof window.sendAdminBroadcastToCloud === "function" && window.multiplayerActive) {
+        sentCloud = await window.sendAdminBroadcastToCloud(msg);
+      }
+      if (!sentCloud) {
+        appendLocalIrcLine("ADMIN", msg);
+      }
+      printLine(`[👑 ADMIN 廣播] ${msg}`, "text-amber-300 font-bold");
+      showAdminModalNotice(`公告已發送：${msg}`, "success");
+    }
+
+    function adminToggleFilterEnabled() {
+      if (!requireAdmin()) return;
+      moderationConfig.filterEnabled = !moderationConfig.filterEnabled;
+      saveModerationConfig(true);
+      sfx.beep();
+      showAdminModalNotice(`防髒話過濾已${moderationConfig.filterEnabled ? "開啟" : "關閉"}。`, "info");
+    }
+    window.adminToggleFilterEnabled = adminToggleFilterEnabled;
+
+    function adminToggleFilterMode() {
+      if (!requireAdmin()) return;
+      moderationConfig.filterMode = moderationConfig.filterMode === "mask" ? "block" : "mask";
+      saveModerationConfig(true);
+      sfx.beep();
+      showAdminModalNotice(`防髒話模式已切換為：${moderationConfig.filterMode === "mask" ? "星號遮蔽 (***)" : "嚴格攔截禁止發送"}`, "info");
+    }
+    window.adminToggleFilterMode = adminToggleFilterMode;
+
+    function adminAddFilterWord() {
+      if (!requireAdmin()) return;
+      const input = document.getElementById("admin-badword-input");
+      const word = (input ? input.value : "").trim().toLowerCase();
+      if (!word) return;
+      if (!moderationConfig.badWords.includes(word)) {
+        moderationConfig.badWords.push(word);
+        saveModerationConfig(true);
+        sfx.success();
+        showAdminModalNotice(`已新增過濾詞彙：${word}`, "success");
+      } else {
+        showAdminModalNotice(`詞彙「${word}」已在清單中。`, "warn");
+      }
+      if (input) input.value = "";
+    }
+    window.adminAddFilterWord = adminAddFilterWord;
+
+    function adminRemoveFilterWord(word) {
+      if (!requireAdmin()) return;
+      moderationConfig.badWords = moderationConfig.badWords.filter(w => w !== word);
+      saveModerationConfig(true);
+      sfx.beep();
+      showAdminModalNotice(`已移除過濾詞彙：${word}`, "info");
+    }
+    window.adminRemoveFilterWord = adminRemoveFilterWord;
+
+    function adminMuteUserFromModal() {
+      if (!requireAdmin()) return;
+      const input = document.getElementById("admin-mute-input");
+      const target = (input ? input.value : "").trim();
+      if (!target) return;
+      if (!moderationConfig.mutedUsers.some(u => u.toLowerCase() === target.toLowerCase())) {
+        moderationConfig.mutedUsers.push(target);
+        saveModerationConfig(true);
+        sfx.success();
+        showAdminModalNotice(`已將玩家 [${target}] 加入禁言名單。`, "warn");
+        printLine(`[👑 ADMIN] 已禁言玩家：${target}`, "text-red-300 font-bold");
+      }
+      if (input) input.value = "";
+    }
+    window.adminMuteUserFromModal = adminMuteUserFromModal;
+
+    function adminUnmuteUser(target) {
+      if (!requireAdmin()) return;
+      moderationConfig.mutedUsers = moderationConfig.mutedUsers.filter(u => u !== target);
+      saveModerationConfig(true);
+      sfx.success();
+      showAdminModalNotice(`已解除玩家 [${target}] 的禁言。`, "success");
+    }
+    window.adminUnmuteUser = adminUnmuteUser;
+
+    function renderAdminModerationUI() {
+      const toggleBtn = document.getElementById("admin-filter-toggle-btn");
+      const modeBtn = document.getElementById("admin-filter-mode-btn");
+      const wordsEl = document.getElementById("admin-badwords-list");
+      const mutedEl = document.getElementById("admin-muted-list");
+
+      if (toggleBtn) {
+        toggleBtn.textContent = moderationConfig.filterEnabled ? "過濾: 開啟" : "過濾: 關閉";
+        toggleBtn.className = moderationConfig.filterEnabled
+          ? "px-2.5 py-1 rounded bg-emerald-700 hover:bg-emerald-600 text-white font-bold text-[11px] cursor-pointer"
+          : "px-2.5 py-1 rounded bg-gray-700 hover:bg-gray-600 text-gray-300 font-bold text-[11px] cursor-pointer";
+      }
+      if (modeBtn) {
+        modeBtn.textContent = moderationConfig.filterMode === "mask" ? "模式: 星號遮蔽 (***)" : "模式: 嚴格攔截";
+      }
+      if (wordsEl) {
+        wordsEl.innerHTML = moderationConfig.badWords.map(w => `
+          <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-950/70 border border-emerald-500/35 text-emerald-200 font-mono text-[11px]">
+            ${escapeHtml(w)}
+            <button type="button" onclick="adminRemoveFilterWord('${escapeHtml(w)}')" class="text-red-400 hover:text-red-200 font-bold cursor-pointer">×</button>
+          </span>
+        `).join("");
+      }
+      if (mutedEl) {
+        mutedEl.innerHTML = moderationConfig.mutedUsers.length === 0
+          ? `<span class="text-gray-500 italic">目前沒有被禁言的玩家。</span>`
+          : moderationConfig.mutedUsers.map(u => `
+              <span class="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-red-950/70 border border-red-500/40 text-red-200 font-mono">
+                🔇 ${escapeHtml(u)}
+                <button type="button" onclick="adminUnmuteUser('${escapeHtml(u)}')" class="text-emerald-300 hover:text-emerald-100 underline cursor-pointer">解禁</button>
+              </span>
+            `).join("");
+      }
+    }
+
+    // 終端機 admin 指令處理器
+    function handleAdminCommand(args) {
+      const sub = (args[0] || "").toLowerCase();
+      if (!sub) {
+        openAdminModal();
+        return;
+      }
+      if (sub === "help") {
+        sfx.beep();
+        printLine("\n=== 🛡️ ADMIN 專屬終端機指令 ===", "text-amber-300 font-bold");
+        printLine("  admin                         - 開啟 Admin 視覺化中控台");
+        printLine("  admin login [密鑰]            - 驗證管理員權限 (預設: NETRUNNER-ROOT)");
+        printLine("  admin broadcast [訊息]        - 發送全服 [👑 ADMIN] 公告");
+        printLine("  admin givebtc [數量]          - 發放 BTC 資產");
+        printLine("  admin mute [代號] / unmute    - 禁言或解禁指定玩家");
+        printLine("  admin addword [詞彙]          - 新增 Chat 防髒話詞彙");
+        printLine("  admin filter [mask|block|off] - 切換防髒話過濾模式");
+        printLine("  admin logout                  - 退出管理員模式\n");
+        return;
+      }
+      if (sub === "login") {
+        const key = (args[1] || "").trim();
+        if (key === ADMIN_PASSCODE) {
+          isAdminAuthenticated = true;
+          syncAdminModalView();
+          sfx.success();
+          printLine("[👑 ADMIN] 驗證通過！你已取得管理員權限。", "text-amber-300 font-bold");
+        } else {
+          sfx.error();
+          printLine("[ADMIN] 密鑰錯誤！（提示: admin login NETRUNNER-ROOT）", "text-red-400");
+        }
+        return;
+      }
+      if (!isAdminAuthenticated) {
+        sfx.error();
+        printLine("[ADMIN 存取被拒] 請先執行 'admin login NETRUNNER-ROOT' 或點擊右上角 🛡️ Admin 驗證！", "text-red-400 font-bold");
+        return;
+      }
+
+      if (sub === "logout") {
+        logoutAdminMode();
+      } else if (sub === "broadcast") {
+        const msg = args.slice(1).join(" ").trim();
+        if (!msg) { printLine("[用法] admin broadcast [公告內容]", "text-red-400"); return; }
+        sendAdminAnnouncement(msg);
+      } else if (sub === "givebtc") {
+        const amt = Number(args[1]);
+        if (!Number.isFinite(amt)) { printLine("[用法] admin givebtc [數量]", "text-red-400"); return; }
+        gameState.btc = Math.max(0, gameState.btc + amt);
+        saveState();
+        updateBtcDisplay();
+        sfx.success();
+        printLine(`[👑 ADMIN] 已發放 ${amt} BTC，目前資產: ${gameState.btc.toFixed(4)} BTC`, "text-yellow-300 font-bold");
+      } else if (sub === "mute" && args[1]) {
+        const target = args[1].trim();
+        if (!moderationConfig.mutedUsers.includes(target)) {
+          moderationConfig.mutedUsers.push(target);
+          saveModerationConfig(true);
+        }
+        sfx.success();
+        printLine(`[👑 ADMIN] 已將 ${target} 加入禁言名單。`, "text-red-300 font-bold");
+      } else if (sub === "unmute" && args[1]) {
+        const target = args[1].trim();
+        moderationConfig.mutedUsers = moderationConfig.mutedUsers.filter(u => u.toLowerCase() !== target.toLowerCase());
+        saveModerationConfig(true);
+        sfx.success();
+        printLine(`[👑 ADMIN] 已解除 ${target} 的禁言。`, "text-emerald-300 font-bold");
+      } else if (sub === "addword" && args[1]) {
+        const w = args[1].trim().toLowerCase();
+        if (!moderationConfig.badWords.includes(w)) {
+          moderationConfig.badWords.push(w);
+          saveModerationConfig(true);
+        }
+        sfx.success();
+        printLine(`[👑 ADMIN] 已將「${w}」加入 Chat 防髒話詞庫。`, "text-emerald-300 font-bold");
+      } else if (sub === "filter") {
+        const mode = (args[1] || "").toLowerCase();
+        if (mode === "off") {
+          moderationConfig.filterEnabled = false;
+        } else if (mode === "mask" || mode === "block") {
+          moderationConfig.filterEnabled = true;
+          moderationConfig.filterMode = mode;
+        } else {
+          printLine("[用法] admin filter [mask|block|off]", "text-red-400");
+          return;
+        }
+        saveModerationConfig(true);
+        sfx.success();
+        printLine(`[👑 ADMIN] Chat 防髒話設定已更新：啟用=${moderationConfig.filterEnabled}, 模式=${moderationConfig.filterMode}`, "text-cyan-300");
+      } else {
+        sfx.error();
+        printLine("[ADMIN] 未知子指令，請輸入 'admin help' 查看說明。", "text-red-400");
+      }
     }
 
     window.addEventListener("DOMContentLoaded", () => {
