@@ -918,6 +918,27 @@
     let bountyTimer = null;
     let terminalBooted = false;
 
+    const termOutput = document.getElementById("terminal-output");
+    const termInput = document.getElementById("terminal-input");
+
+    function printLine(text, colorClass = "text-[#00ff41]", isHtml = false) {
+      if (!termOutput) return;
+      const div = document.createElement("div");
+      div.className = `${colorClass} whitespace-pre-wrap break-words`;
+      if (isHtml) div.innerHTML = text;
+      else div.textContent = text;
+      termOutput.appendChild(div);
+      termOutput.scrollTop = termOutput.scrollHeight;
+    }
+
+    function focusTerminalInput() {
+      if (!termInput) return;
+      const cliView = document.getElementById("cli-view");
+      if (cliView && !cliView.classList.contains("hidden")) {
+        termInput.focus();
+      }
+    }
+
     function getStorageKeyForUid(uid) {
       return uid ? `netrunner_hacker_sim_v6_${uid}` : "netrunner_hacker_sim_v6_guest";
     }
@@ -993,6 +1014,45 @@
       if (window.setMyHandle) window.setMyHandle(gameState.handle);
       else window.myHandle = gameState.handle;
     };
+
+    function getReputationRank(rep) {
+      const val = rep || 0;
+      if (val >= 500) return "Lv.5 矩陣傳奇";
+      if (val >= 250) return "Lv.4 幽靈主宰";
+      if (val >= 120) return "Lv.3 暗網老手";
+      if (val >= 40) return "Lv.2 滲透者";
+      return "Lv.1 新手";
+    }
+
+    function updateRepDisplay() {
+      const repEl = document.getElementById("rep-display");
+      if (repEl) {
+        const repVal = gameState.reputation || 0;
+        repEl.textContent = `${getReputationRank(repVal)} (${repVal})`;
+      }
+    }
+
+    function adjustReputation(delta, reason = "", isPenalty = false) {
+      gameState.reputation = Math.max(0, (gameState.reputation || 0) + delta);
+      if (isPenalty) {
+        gameState.combo = 0;
+      } else if (delta > 0) {
+        gameState.combo = (gameState.combo || 0) + 1;
+      }
+      saveState();
+      updateRepDisplay();
+      if (window.updatePresence) window.updatePresence();
+      if (typeof printLine === "function" && reason) {
+        const sign = delta >= 0 ? `+${delta}` : `${delta}`;
+        printLine(`[聲望${sign}] ${reason}（目前聲望: ${gameState.reputation}）`, delta >= 0 ? "text-cyan-300" : "text-red-400");
+      }
+    }
+
+    function spawnBountyEvent(forceSpawn = false) {
+      if (activeBounty && !forceSpawn) return;
+      if (bountyTimer) clearInterval(bountyTimer);
+      const tpl = BOUNTY_TEMPLATES[Math.floor(Math.random() * BOUNTY_TEMPLATES.length)];
+      activeBounty = { ...tpl, timeLeft: 45 };
 
       sfx.alarm();
       printLine(`\n⚡ [暗網突發懸賞] ${activeBounty.title} (限時 45 秒 / 賞金 ${activeBounty.reward} BTC)`, "text-amber-300 font-bold");
