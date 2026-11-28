@@ -501,7 +501,7 @@
       <!-- Admin Authentication View -->
       <div id="admin-auth-section" class="p-4 rounded-lg border border-amber-500/40 bg-black/60 space-y-3">
         <div class="text-xs font-bold text-amber-300">🔐 ROOT 管理員金鑰驗證</div>
-        <p class="text-[11px] text-gray-300">請輸入管理員存取密鑰以解鎖中控台（預設測試密鑰：<code class="text-amber-300 bg-black px-1.5 py-0.5 rounded border border-amber-500/40">NETRUNNER-ROOT</code>）。</p>
+        <p class="text-[11px] text-gray-300">請輸入管理員存取密鑰以解鎖中控台。</p>
         <div class="flex flex-col sm:flex-row gap-2">
           <input id="admin-passcode-input" type="password" placeholder="輸入管理員密鑰..." onkeydown="if(event.key==='Enter') submitAdminLogin()" class="flex-1 bg-black border border-amber-400/50 rounded px-3 py-2 text-xs font-mono text-amber-200 outline-none" />
           <button type="button" onclick="submitAdminLogin()" class="px-4 py-2 rounded bg-amber-600 hover:bg-amber-500 text-black font-bold text-xs cursor-pointer transition">驗證並進入</button>
@@ -4115,7 +4115,7 @@
         printLine("\n[👑 ADMIN] 已通過管理員金鑰驗證，解鎖專屬管理權限！\n", "text-amber-300 font-bold");
       } else {
         sfx.error();
-        showAdminModalNotice("密鑰錯誤！存取遭到拒絕。（提示：NETRUNNER-ROOT）", "error");
+        showAdminModalNotice("密鑰錯誤！存取遭到拒絕。", "error");
       }
     }
     window.submitAdminLogin = submitAdminLogin;
